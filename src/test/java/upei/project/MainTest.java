@@ -8,7 +8,8 @@ public class MainTest {
 
 
     @Test
-    public void testMainConstructor(){
+    public void testMainConstructor()
+    {
         Main myMain = new Main();
 
 

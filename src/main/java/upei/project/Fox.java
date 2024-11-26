@@ -8,6 +8,6 @@ public class Fox extends Enemy {
 
     @Override
     public void Shout() {
-        Debug.print("Woof woof🦊🦊🦊🦊!");
+        Debug.print("Choot Choot🦊🦊🦊🦊!");
     }
 }

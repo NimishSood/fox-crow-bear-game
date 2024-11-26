@@ -11,7 +11,8 @@ public class Main {
     }
 
     // generic to make debugging easy
-    public static <T> void print(T arg1) {
+    public static <T> void print(T arg1)
+    {
         System.out.print(arg1);
     }
 
