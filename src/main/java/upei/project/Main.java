@@ -10,9 +10,10 @@ public class Main {
         print("Fox and Dalaal Game");
     }
 
-
     // generic to make debugging easy
     public static <T> void print(T arg1) {
         System.out.print(arg1);
     }
+
+
 }
