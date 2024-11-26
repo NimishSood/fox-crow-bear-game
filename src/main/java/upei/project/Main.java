@@ -19,6 +19,12 @@ public class Main {
     public static void main(String[] args) {
         // Press Alt+Enter with your caret at the highlighted text to see how
         // IntelliJ IDEA suggests fixing it.
-        System.out.print("Fox and King Game");
+        print("Fox and Dalaal Game");
+    }
+
+
+    // generic to make debugging easy
+    public static <T> void print(T arg1) {
+        System.out.print(arg1);
     }
 }
