@@ -14,8 +14,8 @@ public class Board {
         }
 
         // initialize start and finish line
-        this.board[0][0] = new Block("Start");
-        this.board[this.board.length-1][this.board.length-1] = new Block("Finish");
+//        this.board[0][0] = new Block("Start");
+//        this.board[this.board.length-1][this.board.length-1] = new Block("Finish");
     }
 
     public void printBoard() {

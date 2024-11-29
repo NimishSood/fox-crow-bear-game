@@ -11,6 +11,19 @@ public class Main {
         System.out.println("-------New Game---");
         System.out.println("Making a board for you...");
         Board newBoard = new Board();
+
+
+
+        // Initializing Players...
+        Player player1 = new Player("Adi");
+        Player player2 = new Player("Nimish");
+        Player player3 = new Player("Harsh");
+
+
+        // TEST... add player 1 to board[0][0]
+        newBoard.board[0][0].AddPlayerToBlock(player1);
+        newBoard.board[0][0].AddPlayerToBlock(player2);
+        newBoard.board[0][0].AddPlayerToBlock(player3);
         newBoard.printBoard();
 
     }
