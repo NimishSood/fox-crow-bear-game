@@ -8,7 +8,13 @@ public class Main {
         // Press Alt+Enter with your caret at the highlighted text to see how
         // IntelliJ IDEA suggests fixing it.
         print("Fox and Dalaal Game");
+        System.out.println("-------New Game---");
+        System.out.println("Making a board for you...");
+        Board newBoard = new Board();
+        newBoard.printBoard();
+
     }
+
 
     // generic to make debugging easy
     public static <T> void print(T arg1)
