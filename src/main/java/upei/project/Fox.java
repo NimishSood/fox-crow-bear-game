@@ -3,7 +3,8 @@ package upei.project;
 public class Fox extends Block
 {
     public Fox(int position) {
-        super(position, "Fox");  // Initialize the Fox block with its position
+        super(position, "Fox");
+        // Initialize the Fox block with its position
     }
 
     @Override

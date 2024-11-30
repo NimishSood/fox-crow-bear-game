@@ -46,7 +46,7 @@ public class Player {
     }
 
     // Method to simulate taking a turn (e.g., rolling the dice)
-    public void takeTurn(int diceRoll) {
+    public void takeTurn(int diceRoll, GameBoard board) {
         int currentPositionIndex = currentPosition.getPosition();  // Get the current position (1 to 100)
         int newPositionIndex = currentPositionIndex + diceRoll;    // Add dice roll to position
 
@@ -70,6 +70,21 @@ public class Player {
         System.out.println(name + " moves to " + newBlock);
 
         // Apply any effects of the new block (e.g., Fox, Crow, Dalal)
-        newBlock.applyEffect(this);
+        if (newBlock instanceof Fox) {
+            Fox foxBlock = (Fox) newBlock;
+            foxBlock.applyEffect(this);
+        }
+        else if (newBlock instanceof  Crow) {
+            Crow crowBlock = (Crow) newBlock;
+            crowBlock.applyEffect(this);
+        }
+        else if (newBlock instanceof Dalal) {
+            Dalal dalalBlock = (Dalal) newBlock;
+            dalalBlock.applyEffect(this);
+        }
+
+        else {
+            newBlock.applyEffect(this);
+        }
     }
 }

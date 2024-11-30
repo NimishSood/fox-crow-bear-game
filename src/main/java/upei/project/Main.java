@@ -1,5 +1,7 @@
 package upei.project;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -13,6 +15,8 @@ public class Main {
         Player player2 = new Player("Bob");
 
         // Let players take turns until one of them reaches the end (position 100)
+
+        // initialize scanner for input
         Scanner scanner = new Scanner(System.in);
         boolean gameOver = false;
 
@@ -20,7 +24,7 @@ public class Main {
         while (!gameOver) {
             // Player 1's turn
             System.out.println("\n" + player1.getName() + "'s turn:");
-            takeTurn(player1, scanner);
+            takeTurn(player1, scanner,gameBoard);
 
             // Check if player1 has reached position 100
             if (player1.getCurrentPosition().getPosition() == 100) {
@@ -31,7 +35,7 @@ public class Main {
 
             // Player 2's turn
             System.out.println("\n" + player2.getName() + "'s turn:");
-            takeTurn(player2, scanner);
+            takeTurn(player2, scanner, gameBoard);
 
             // Check if player2 has reached position 100
             if (player2.getCurrentPosition().getPosition() == 100) {
@@ -45,12 +49,12 @@ public class Main {
     }
 
     // Method to handle a player's turn
-    private static void takeTurn(Player player, Scanner scanner) {
+    private static void takeTurn(Player player, Scanner scanner, GameBoard board) {
         // Simulate dice roll (1 to 6)
         int diceRoll = (int) (Math.random() * 6) + 1;
         System.out.println(player.getName() + " rolls the dice: " + diceRoll);
 
         // Player takes their turn with the dice roll
-        player.takeTurn(diceRoll);
+        player.takeTurn(diceRoll, board);
     }
 }

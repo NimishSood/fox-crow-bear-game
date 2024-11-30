@@ -7,7 +7,7 @@ public class GameBoard {
     public GameBoard() {
         initializeBoard();
     }
-    private static void initializeBoard() {
+    private void initializeBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 int position = row * 10 + (col + 1);  // Mapping to 1 to 100 position
@@ -21,7 +21,7 @@ public class GameBoard {
                 } else if (position == 6 || position == 9 || position == 21 || position == 41) {
                     block = new Crow(position);  // Create a Crow block
                 } else if (position == 99 || position == 79 || position == 29 || position == 38) {
-                    block = new Dalal(position);  // Create a Dalal block
+                    block = new Dalal(position,this);  // Create a Dalal block
                 } else {
                     block = new Block(position, "Regular");  // Default to Regular block
                 }
