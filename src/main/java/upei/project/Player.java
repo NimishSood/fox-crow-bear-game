@@ -1,24 +1,75 @@
 package upei.project;
 
-import java.util.Random;
-
 public class Player {
-    // store name, score of the player
-    String name;
-    Integer score;
-    Random random = new Random();
-    // setup player constructor
-    public Player(String name){
+    private final String name;           // Player's name
+    private Block currentPosition;       // Player's current position on the board
+    private int lastMove;                // Tracks the last dice roll
+
+    // Constructor
+    public Player(String name) {
         this.name = name;
-        this.score = 0;
+        this.currentPosition = GameBoard.getBlock(1);  // All players start at position 1
+        this.lastMove = 0;  // No last move initially
+        currentPosition.addPlayer(this);  // Add player to the starting block
     }
 
-    // Roll the dice
-    // get an outcome bw 1--6
-    public Integer rollDice() {
-        int diceroll = random.nextInt(6) + 1;
-        return diceroll;
+    // Getter for the player's name
+    public String getName() {
+        return name;
     }
 
+    // Getter for the player's current position
+    public Block getCurrentPosition() {
+        return currentPosition;
+    }
 
+    // Getter for lastMove (the dice roll)
+    public int getLastMove() {
+        return lastMove;
+    }
+
+    // Setter for lastMove
+    public void setLastMove(int lastMove) {
+        this.lastMove = lastMove;
+    }
+
+    // Method to update the player's position
+    public void setPosition(Block newBlock) {
+        // Remove the player from their current position
+        currentPosition.removePlayer(this);
+
+        // Set the new position
+        currentPosition = newBlock;
+
+        // Add the player to the new block
+        newBlock.addPlayer(this);
+    }
+
+    // Method to simulate taking a turn (e.g., rolling the dice)
+    public void takeTurn(int diceRoll) {
+        int currentPositionIndex = currentPosition.getPosition();  // Get the current position (1 to 100)
+        int newPositionIndex = currentPositionIndex + diceRoll;    // Add dice roll to position
+
+        // Set the player's last move (dice roll)
+        setLastMove(diceRoll);
+
+        // Check if the player exceeds the board limit and adjust if necessary
+        if (newPositionIndex > 100) {
+            newPositionIndex = 100;  // Cap at the last position (100)
+        } else if (newPositionIndex < 1) {
+            newPositionIndex = 1;    // Ensure it doesn't go below position 1
+        }
+
+        // Get the new block based on the updated position
+        Block newBlock = GameBoard.getBlock(newPositionIndex);
+
+        // Set the new position for the player
+        setPosition(newBlock);
+
+        // Print player's movement
+        System.out.println(name + " moves to " + newBlock);
+
+        // Apply any effects of the new block (e.g., Fox, Crow, Dalal)
+        newBlock.applyEffect(this);
+    }
 }

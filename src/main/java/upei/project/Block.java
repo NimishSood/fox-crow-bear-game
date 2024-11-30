@@ -1,34 +1,55 @@
 package upei.project;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Block {
-    String property;
-    ArrayList<Player> currentPlayers;
+    private final int position;             // Position of the block (1 to 100)
+    private final String type;              // Type of block (Regular, Fox, Crow, Dalal)
+    private final List<Player> currentPlayers;  // Players currently on this block
 
-    public Block() {
-        this.property = "0";
-        currentPlayers = new ArrayList<Player>();
-    }
-
-    public Block(String property) {
-        this.property = property;
-        currentPlayers = new ArrayList<Player>();
-
-    }
-
-    public void AddPlayerToBlock( Player targetPlayer) {
-        if (!this.currentPlayers.contains(targetPlayer)) {
-            this.currentPlayers.add(targetPlayer);
-            if (this.property=="0") {
-                this.property = "["+targetPlayer.name+"]";
-            }
-            else {
-                this.property = this.property.substring(0,1) + targetPlayer.name + " " + this.property.substring(1);
-            }
+    // Constructor
+    public Block(int position, String type) {
+        if (position < 1 || position > 100) {
+            throw new IllegalArgumentException("Position must be between 1 and 100.");
         }
+        this.position = position;
+        this.type = type;
+        this.currentPlayers = new ArrayList<>();
     }
 
+    // Getter for position
+    public int getPosition() {
+        return position;
+    }
+
+    // Getter for block type
+    public String getType() {
+        return type;
+    }
+
+    // Getter for players on this block
+    public List<Player> getCurrentPlayers() {
+        return currentPlayers;
+    }
+
+    // Add a player to the block
+    public void addPlayer(Player player) {
+        currentPlayers.add(player);
+    }
+
+    // Remove a player from the block
+    public void removePlayer(Player player) {
+        currentPlayers.remove(player);
+    }
+
+    // Apply effect (to be overridden by subclasses)
+    public void applyEffect(Player player) {
+        System.out.println("Regular block: No effect.");
+    }
+
+    @Override
+    public String toString() {
+        return "Block " + position + " - Type: " + type;
+    }
 }
-
-
