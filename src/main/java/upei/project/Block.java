@@ -52,4 +52,15 @@ public class Block {
     public String toString() {
         return "Block " + position + " - Type: " + type;
     }
+    public String getPlayersInitials() {
+        StringBuilder initials = new StringBuilder();
+        for (Player player : currentPlayers) {
+            if (initials.length() > 0) {
+                initials.append(","); // Add a comma between initials
+            }
+            initials.append(player.getName().substring(0, 1)); // Use first initial
+        }
+        return initials.toString();
+    }
+
 }

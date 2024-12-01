@@ -7,6 +7,7 @@ public class GameBoard {
     public GameBoard() {
         initializeBoard();
     }
+
     private void initializeBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
@@ -43,7 +44,94 @@ public class GameBoard {
         }
     }
 
-    // Print the board (for debugging purposes)
+    // Print the board with player positions
+//    public void printBoardWithPlayers(Player[] players) {
+//        // Create a copy of the board to print
+//        String[][] displayBoard = new String[10][10];
+//
+//        // Initialize the board with block type labels (Regular, Fox, Crow, Bear)
+//        for (int row = 0; row < 10; row++) {
+//            for (int col = 0; col < 10; col++) {
+//                Block block = board[row][col];
+//                if (block instanceof Fox) {
+//                    displayBoard[row][col] = "F";  // Fox block
+//                } else if (block instanceof Crow) {
+//                    displayBoard[row][col] = "C";  // Crow block
+//                } else if (block instanceof Bear) {
+//                    displayBoard[row][col] = "B";  // Bear block
+//                } else {
+//                    displayBoard[row][col] = "R";  // Regular block
+//                }
+//            }
+//        }
+//
+//        // Now, place players on the board
+//        for (Player player : players) {
+//            int playerPos = player.getCurrentPosition().getPosition();
+//            int row = (playerPos - 1) / 10;  // Get row from position
+//            int col = (playerPos - 1) % 10;  // Get column from position
+//
+//            // If there is already a player at this position, append the new player's initial
+//            if (displayBoard[row][col].length() > 1) {
+//                // Append player's initial, prefixed with a comma
+//                displayBoard[row][col] += "," + player.getName().substring(0, 1);
+//            } else {
+//                // No player at this position, just place the initial
+//                displayBoard[row][col] = player.getName().substring(0, 1);
+//            }
+//        }
+//
+//        // Print the board in a 10x10 grid format
+//        System.out.println("Game Board:");
+//        for (int row = 0; row < 10; row++) {
+//            for (int col = 0; col < 10; col++) {
+//                System.out.print(displayBoard[row][col] + "\t");
+//            }
+//            System.out.println();  // New line after each row
+//        }
+//    }
+//    public void printBoardWithPlayers(Player[] players) {
+//        System.out.println("Game Board:");
+//
+//        // Loop through each row and column
+//        for (int row = 0; row < 10; row++) {
+//            for (int col = 0; col < 10; col++) {
+//                Block block = board[row][col];
+//
+//                // Print the block type (F, C, B, R) and players on the block
+//                System.out.print(block.getPlayersInitials() + "\t");
+//            }
+//            System.out.println(); // Move to the next line after each row
+//        }
+//    }
+    public void printBoardWithPlayers(Player[] players) {
+        System.out.println("Game Board:");
+
+        // Loop through each row and column
+        for (int row = 0; row < 10; row++) {
+            for (int col = 0; col < 10; col++) {
+                Block block = board[row][col];
+
+                // Print the block type and players on the block
+                String blockType = block.getType();
+                String playersOnBlock = block.getPlayersInitials();
+
+                // Format the output to show both the block type and players
+                if (playersOnBlock.isEmpty()) {
+                    System.out.print(blockType.substring(0, 1) + "\t");  // Print only the first letter of block type
+                } else {
+                    System.out.print(playersOnBlock + "\t");  // Print player initials
+                }
+            }
+            System.out.println(); // Move to the next line after each row
+        }
+    }
+
+
+
+
+
+    // Print the board for debugging purposes
     public void printBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {

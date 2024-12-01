@@ -7,7 +7,7 @@ public class Crow extends Block {
 
     @Override
     public void applyEffect(Player player) {
-        System.out.println("Caw caw! " + player.getName() + " is picked up by a crow!");
+        System.out.println("Caw caw! " + player.getName() + " is picked up by a crow!. Leaving player to the end of row");
         // have to fix crow logic for picking up
         int currentPos = player.getCurrentPosition().getPosition();
         int newPos;

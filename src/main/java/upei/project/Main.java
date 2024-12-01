@@ -1,7 +1,5 @@
 package upei.project;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -16,59 +14,32 @@ public class Main {
         Player player3 = new Player("Harsh");
         Player player4 = new Player("Govind");
 
-        // Let players take turns until one of them reaches the end (position 100)
+        // Store players in an array for easier iteration
+        Player[] players = {player1, player2, player3, player4};
+
+        // Print the initial board with players at the start
+        gameBoard.printBoardWithPlayers(players);
 
         // initialize scanner for input
         Scanner scanner = new Scanner(System.in);
         boolean gameOver = false;
-        gameBoard.printBoard();
 
         // Main game loop
         while (!gameOver) {
-            // Player 1's turn
-            System.out.println("\n" + player1.getName() + "'s turn:");
-            takeTurn(player1, scanner,gameBoard);
+            for (Player player : players) {
+                System.out.println("\n" + player.getName() + "'s turn:");
+                takeTurn(player, scanner, gameBoard);
 
-            // Check if player1 has reached position 100
-            if (player1.getCurrentPosition().getPosition() == 100) {
-                System.out.println(player1.getName() + " wins!");
-                gameOver = true;
-                break;
+                // Print the board after each player's turn
+                gameBoard.printBoardWithPlayers(players);
+
+                // Check if the player has reached position 100
+                if (player.getCurrentPosition().getPosition() == 100) {
+                    System.out.println(player.getName() + " wins!");
+                    gameOver = true;
+                    break;
+                }
             }
-
-            // Player 2's turn
-            System.out.println("\n" + player2.getName() + "'s turn:");
-            takeTurn(player2, scanner, gameBoard);
-
-            // Check if player2 has reached position 100
-            if (player2.getCurrentPosition().getPosition() == 100) {
-                System.out.println(player2.getName() + " wins!");
-                gameOver = true;
-                break;
-            }
-
-            // Player 3's turn
-            System.out.println("\n" + player3.getName() + "'s turn:");
-            takeTurn(player3, scanner, gameBoard);
-
-            // Check if player2 has reached position 100
-            if (player3.getCurrentPosition().getPosition() == 100) {
-                System.out.println(player3.getName() + " wins!");
-                gameOver = true;
-                break;
-            }
-
-            // Player 4's turn
-            System.out.println("\n" + player4.getName() + "'s turn:");
-            takeTurn(player4, scanner, gameBoard);
-
-            // Check if player2 has reached position 100
-            if (player4.getCurrentPosition().getPosition() == 100) {
-                System.out.println(player4.getName() + " wins!");
-                gameOver = true;
-                break;
-            }
-
         }
 
         scanner.close();
