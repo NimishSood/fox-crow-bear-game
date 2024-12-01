@@ -8,9 +8,18 @@ public class Crow extends Block {
     @Override
     public void applyEffect(Player player) {
         System.out.println("Caw caw! " + player.getName() + " is picked up by a crow!");
-
+        // have to fix crow logic for picking up
         int currentPos = player.getCurrentPosition().getPosition();
-        int newPos = currentPos + 1;  // Move to the next position
+        int newPos;
+        if (currentPos%10==0)
+        {
+            newPos = currentPos+10;
+        }
+        else
+        {
+            newPos = currentPos+(10-currentPos%10);
+        }
+//        int newPos = currentPos + 1;  // Move to the next position
 
         // If the new position exceeds 100, cap it at position 100
         if (newPos > 100) {

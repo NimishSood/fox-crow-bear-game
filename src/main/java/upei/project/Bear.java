@@ -1,16 +1,16 @@
 package upei.project;
 
-public class Dalal extends Block {
+public class Bear extends Block {
     GameBoard currentBoard;
-    public Dalal(int position, GameBoard board) {
-        super(position, "Dalal");
+    public Bear(int position, GameBoard board) {
+        super(position, "Bear");
         this.currentBoard = board;
     }
 
     @Override
     public void applyEffect(Player player)
     {
-        System.out.println("Dalal block! " + player.getName() + " is sent back to their previous position!");
+        System.out.println("Bear block! " + player.getName() + " is sent back to their previous position!");
         // No further actions, just print the message and end the turn
         // reference to the current position of the block
         int currentPositionOfPlayer = player.getCurrentPosition().getPosition();

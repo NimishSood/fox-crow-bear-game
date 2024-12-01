@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Block {
     private final int position;             // Position of the block (1 to 100)
-    private final String type;              // Type of block (Regular, Fox, Crow, Dalal)
+    private final String type;              // Type of block (Regular, Fox, Crow, Bear)
     private final List<Player> currentPlayers;  // Players currently on this block
 
     // Constructor

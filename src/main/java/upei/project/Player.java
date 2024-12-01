@@ -69,7 +69,7 @@ public class Player {
         // Print player's movement
         System.out.println(name + " moves to " + newBlock);
 
-        // Apply any effects of the new block (e.g., Fox, Crow, Dalal)
+        // Apply any effects of the new block (e.g., Fox, Crow, Bear)
         if (newBlock instanceof Fox) {
             Fox foxBlock = (Fox) newBlock;
             foxBlock.applyEffect(this);
@@ -78,9 +78,9 @@ public class Player {
             Crow crowBlock = (Crow) newBlock;
             crowBlock.applyEffect(this);
         }
-        else if (newBlock instanceof Dalal) {
-            Dalal dalalBlock = (Dalal) newBlock;
-            dalalBlock.applyEffect(this);
+        else if (newBlock instanceof Bear) {
+            Bear BearBlock = (Bear) newBlock;
+            BearBlock.applyEffect(this);
         }
 
         else {

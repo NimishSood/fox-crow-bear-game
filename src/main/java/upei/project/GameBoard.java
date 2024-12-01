@@ -21,7 +21,7 @@ public class GameBoard {
                 } else if (position == 6 || position == 9 || position == 21 || position == 41) {
                     block = new Crow(position);  // Create a Crow block
                 } else if (position == 99 || position == 79 || position == 29 || position == 38) {
-                    block = new Dalal(position,this);  // Create a Dalal block
+                    block = new Bear(position,this);  // Create a Bear block
                 } else {
                     block = new Block(position, "Regular");  // Default to Regular block
                 }

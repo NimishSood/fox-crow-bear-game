@@ -11,14 +11,17 @@ public class Main {
         GameBoard gameBoard = new GameBoard();
 
         // Create players
-        Player player1 = new Player("Alice");
-        Player player2 = new Player("Bob");
+        Player player1 = new Player("Aditya");
+        Player player2 = new Player("Nimish");
+        Player player3 = new Player("Harsh");
+        Player player4 = new Player("Govind");
 
         // Let players take turns until one of them reaches the end (position 100)
 
         // initialize scanner for input
         Scanner scanner = new Scanner(System.in);
         boolean gameOver = false;
+        gameBoard.printBoard();
 
         // Main game loop
         while (!gameOver) {
@@ -43,6 +46,29 @@ public class Main {
                 gameOver = true;
                 break;
             }
+
+            // Player 3's turn
+            System.out.println("\n" + player3.getName() + "'s turn:");
+            takeTurn(player3, scanner, gameBoard);
+
+            // Check if player2 has reached position 100
+            if (player3.getCurrentPosition().getPosition() == 100) {
+                System.out.println(player3.getName() + " wins!");
+                gameOver = true;
+                break;
+            }
+
+            // Player 4's turn
+            System.out.println("\n" + player4.getName() + "'s turn:");
+            takeTurn(player4, scanner, gameBoard);
+
+            // Check if player2 has reached position 100
+            if (player4.getCurrentPosition().getPosition() == 100) {
+                System.out.println(player4.getName() + " wins!");
+                gameOver = true;
+                break;
+            }
+
         }
 
         scanner.close();
