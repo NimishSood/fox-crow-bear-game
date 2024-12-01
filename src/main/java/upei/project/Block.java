@@ -44,7 +44,7 @@ public class Block {
     }
 
     // Apply effect (to be overridden by subclasses)
-    public void applyEffect(Player player) {
+    public void  applyEffect(Player player) {
         System.out.println("Regular block: No effect.");
     }
 
