@@ -23,7 +23,13 @@ public class GameBoard {
                     block = new Crow(position);  // Create a Crow block
                 } else if (position == 99 || position == 79 || position == 29 || position == 38) {
                     block = new Bear(position,this);  // Create a Bear block
-                } else {
+                } else if (position==4 || position==10 || position==14|| position==44 || position ==65|| position==85) {
+                    block=new PowerUp(position);
+                }else if (position==8 || position==11 || position==16|| position==46 || position ==66|| position==86) {
+                    block = new PowerDown(position);
+                }else if (position==7 || position==17 || position==36|| position==76 || position ==82|| position==91) {
+                    block = new Luck(position);
+                }else {
                     block = new Block(position, "Regular");  // Default to Regular block
                 }
 
@@ -44,66 +50,6 @@ public class GameBoard {
         }
     }
 
-    // Print the board with player positions
-//    public void printBoardWithPlayers(Player[] players) {
-//        // Create a copy of the board to print
-//        String[][] displayBoard = new String[10][10];
-//
-//        // Initialize the board with block type labels (Regular, Fox, Crow, Bear)
-//        for (int row = 0; row < 10; row++) {
-//            for (int col = 0; col < 10; col++) {
-//                Block block = board[row][col];
-//                if (block instanceof Fox) {
-//                    displayBoard[row][col] = "F";  // Fox block
-//                } else if (block instanceof Crow) {
-//                    displayBoard[row][col] = "C";  // Crow block
-//                } else if (block instanceof Bear) {
-//                    displayBoard[row][col] = "B";  // Bear block
-//                } else {
-//                    displayBoard[row][col] = "R";  // Regular block
-//                }
-//            }
-//        }
-//
-//        // Now, place players on the board
-//        for (Player player : players) {
-//            int playerPos = player.getCurrentPosition().getPosition();
-//            int row = (playerPos - 1) / 10;  // Get row from position
-//            int col = (playerPos - 1) % 10;  // Get column from position
-//
-//            // If there is already a player at this position, append the new player's initial
-//            if (displayBoard[row][col].length() > 1) {
-//                // Append player's initial, prefixed with a comma
-//                displayBoard[row][col] += "," + player.getName().substring(0, 1);
-//            } else {
-//                // No player at this position, just place the initial
-//                displayBoard[row][col] = player.getName().substring(0, 1);
-//            }
-//        }
-//
-//        // Print the board in a 10x10 grid format
-//        System.out.println("Game Board:");
-//        for (int row = 0; row < 10; row++) {
-//            for (int col = 0; col < 10; col++) {
-//                System.out.print(displayBoard[row][col] + "\t");
-//            }
-//            System.out.println();  // New line after each row
-//        }
-//    }
-//    public void printBoardWithPlayers(Player[] players) {
-//        System.out.println("Game Board:");
-//
-//        // Loop through each row and column
-//        for (int row = 0; row < 10; row++) {
-//            for (int col = 0; col < 10; col++) {
-//                Block block = board[row][col];
-//
-//                // Print the block type (F, C, B, R) and players on the block
-//                System.out.print(block.getPlayersInitials() + "\t");
-//            }
-//            System.out.println(); // Move to the next line after each row
-//        }
-//    }
     public void printBoardWithPlayers(Player[] players) {
         System.out.println("Game Board:");
 

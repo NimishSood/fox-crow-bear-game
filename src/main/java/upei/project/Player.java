@@ -5,6 +5,7 @@ public class Player {
     private Block currentPosition;       // Player's current position on the board
     private int lastMove;                // Tracks the last dice roll
     private int power;
+    private int luck;
     // Constructor
     public Player(String name) {
         this.name = name;
@@ -39,9 +40,30 @@ public class Player {
         return this.power;
     }
 
+    // getter for luck
+    public int getLuck() {
+        return this.luck;
+    }
+
     // setter for power
     public void setPower(int power) {
         this.power = power;
+        if (this.power>5)
+        {
+            this.power=5;
+        } else if (this.power<1)
+        {
+            this.power=1;
+        }
+    }
+
+    // setter for luck
+    public void setLuck(int luck) {
+        this.luck = luck;
+        if(this.luck>5)
+        {
+            this.luck=5;
+        }
     }
 
     // Method to update the player's position
@@ -92,9 +114,13 @@ public class Player {
         else if (newBlock instanceof Bear) {
             Bear BearBlock = (Bear) newBlock;
             BearBlock.applyEffect(this);
-        }
-
-        else {
+        } else if (newBlock instanceof PowerUp) {
+            PowerUp powerUp = (PowerUp) newBlock;
+            powerUp.applyEffect(this);
+        } else if (newBlock instanceof PowerDown) {
+            PowerDown powerDown = (PowerDown) newBlock;
+            powerDown.applyEffect(this);
+        } else {
             newBlock.applyEffect(this);
         }
     }

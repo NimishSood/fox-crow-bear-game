@@ -8,9 +8,11 @@ public class PowerDown extends Block{
 
     @Override
     public void applyEffect(Player player) {
-        System.out.println("Power down block! " + player.getName() + " -1 power!");
-        if (player.getPower() > 0) {
+        if (player.getPower()>1) {
+            System.out.println("Power down block! " + player.getName() + " looses 1 power! \nCurrent Power level: " + (player.getPower() - 1));
             player.setPower(player.getPower() - 1);
+        }else {
+            System.out.println("Didn't know it was possible to be this weak. Can't power down "+player.getName()+"further. \nCurrent Power level: 1");
         }
     }
 }

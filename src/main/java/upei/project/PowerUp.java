@@ -8,7 +8,15 @@ public class PowerUp extends Block{
 
     @Override
     public void applyEffect(Player player) {
-        System.out.println("Powerup block! "+player.getName()+" gets +1 power");
-        player.setPower(player.getPower() + 1);
+        if (player.getPower()<5)
+        {
+            System.out.println("Powerup block! "+player.getName()+" gets +1 power.\n Current Power Level: "+player.getPower()+1);
+            player.setPower(player.getPower() + 1);
+        }
+        else
+        {
+            System.out.println("You are already too strong for the power up!");
+        }
+
     }
 }
