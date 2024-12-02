@@ -4,13 +4,14 @@ public class Player {
     private final String name;           // Player's name
     private Block currentPosition;       // Player's current position on the board
     private int lastMove;                // Tracks the last dice roll
-
+    private int power;
     // Constructor
     public Player(String name) {
         this.name = name;
         this.currentPosition = GameBoard.getBlock(1);  // All players start at position 1
         this.lastMove = 0;  // No last move initially
         currentPosition.addPlayer(this);  // Add player to the starting block
+        this.power = 0;
     }
 
     // Getter for the player's name
@@ -31,6 +32,16 @@ public class Player {
     // Setter for lastMove
     public void setLastMove(int lastMove) {
         this.lastMove = lastMove;
+    }
+
+    // getter for power
+    public int getPower() {
+        return this.power;
+    }
+
+    // setter for power
+    public void setPower(int power) {
+        this.power = power;
     }
 
     // Method to update the player's position
