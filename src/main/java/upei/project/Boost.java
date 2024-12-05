@@ -1,7 +1,9 @@
 package upei.project;
 
 
+import java.util.Random;
 import java.util.Scanner;
+
 
 /*
 Boost gives player block a decision to make
@@ -10,7 +12,7 @@ Boost gives player block a decision to make
  */
 
 public class Boost extends Block{
-
+    Random rand = new Random();
     GameBoard currentBoard;
 
     public Boost(int position, GameBoard board) {
@@ -32,16 +34,38 @@ public class Boost extends Block{
         );
 
         // keyboard input
-        String decision = keyboardInput.nextLine();
+        // SIMULATION EXTENSION--
 
+        // --Strat 1 take aditya constantly punching harsh
+        // others may or may not punch him
+        String decision = "punch";
+        if (player.getName() == "Aditya") {
+            decision = "punch";
+        }
+        else {
+            int randomNumber = rand.nextInt(2);
+            if (randomNumber == 0) {
+                decision = "move";
+                decision = "punch";
+            }
+        }
 
         if (decision.equals("punch")) {
             // iterate through all the players
             System.out.println("Enter the player's name: ");
-            String playerName = keyboardInput.nextLine();
+            String playerName = "";
+            if (player.getName() == "Aditya") {
+                playerName = "Harsh";
+            }
+            else {
+                // if player is not Aditya, they can punch anyone.
+                String[] players = new String[]{"Nimish", "Harsh","Aditya","Govind"};
+                String randomTargetToPunch = players[rand.nextInt(players.length)];
+                playerName = randomTargetToPunch;
+            }
             boolean foundPlayer = false;
-            for (Player pl: currentBoard.players) {
 
+            for (Player pl: currentBoard.players) {
                 if (pl.getName().equals(playerName)) {
                     foundPlayer = true;
                     int targetPlayerPosition = pl.getCurrentPosition().getPosition();

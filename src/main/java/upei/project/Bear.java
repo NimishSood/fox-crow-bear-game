@@ -30,7 +30,7 @@ public class Bear extends Block {
                 break;
             case 4:
                 player.setPosition(GameBoard.getBlock(currentPosition+1));
-                System.out.println(player.getName()+" made, the Bear at position: "+currentPosition+" shat his pants and ran away for good."+"\nNew position: "+player.getCurrentPosition().getPosition());
+                System.out.println(player.getName()+" made, the Bear at position: "+currentPosition+" ran away for good."+"\nNew position: "+player.getCurrentPosition().getPosition());
                 int row = (currentPosition - 1) / 10;  // Get the row (0-based)
                 int col = (currentPosition - 1) % 10;  // Get the column
                 Block block=new Block(currentPosition,"Regular");
