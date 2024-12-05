@@ -2,10 +2,16 @@ package upei.project;
 
 public class GameBoard {
     private static final Block[][] board = new Block[10][10];  // 2D array for the board (static)
-
+    public Player[] players; // 
     // Constructor (no longer needed for static fields, but still good to initialize the board)
     public GameBoard() {
         initializeBoard();
+    }
+
+    // initialize with players
+    public GameBoard(Player[] players) {
+        initializeBoard();
+        this.players = players;
     }
 
     private void initializeBoard() {

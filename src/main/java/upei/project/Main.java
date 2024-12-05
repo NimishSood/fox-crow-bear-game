@@ -3,11 +3,10 @@ package upei.project;
 import java.util.Scanner;
 
 public class Main {
-
     public static void main(String[] args) {
-        // Initialize the game board (static initialization)
-        GameBoard gameBoard = new GameBoard();
 
+        // Initialize the game board (static initialization
+        GameBoard gameBoard = new GameBoard();
         // Create players
         Player player1 = new Player("Aditya");
         Player player2 = new Player("Nimish");
@@ -17,6 +16,8 @@ public class Main {
         // Store players in an array for easier iteration
         Player[] players = {player1, player2, player3, player4};
 
+        // add the existing players in the gameboard
+        gameBoard.players = players;
         // Print the initial board with players at the start
         gameBoard.printBoardWithPlayers(players);
 
