@@ -8,10 +8,11 @@ public class PowerUp extends Block{
 
     @Override
     public void applyEffect(Player player) {
-        if (player.getPower()<5)
+        if (player.getPower()<4)
         {
-            System.out.println("Powerup block! "+player.getName()+" gets +1 power.\n Current Power Level: "+player.getPower()+1);
+            System.out.println("Powerup block! "+player.getName()+" gets +1 power");
             player.setPower(player.getPower() + 1);
+            System.out.println(player.getName()+" Current Power Level: "+player.getPower());
         }
         else
         {

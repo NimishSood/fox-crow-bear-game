@@ -12,7 +12,7 @@ public class Player {
         this.currentPosition = GameBoard.getBlock(1);  // All players start at position 1
         this.lastMove = 0;  // No last move initially
         currentPosition.addPlayer(this);  // Add player to the starting block
-        this.power = 0;
+        this.power = 1;
     }
 
     // Getter for the player's name
@@ -120,7 +120,12 @@ public class Player {
         } else if (newBlock instanceof PowerDown) {
             PowerDown powerDown = (PowerDown) newBlock;
             powerDown.applyEffect(this);
-        } else {
+        }
+        else if (newBlock instanceof Luck) {
+            Luck luckBlock = (Luck) newBlock;
+            luckBlock.applyEffect(this);
+        }
+        else {
             newBlock.applyEffect(this);
         }
     }

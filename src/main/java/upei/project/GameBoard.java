@@ -1,11 +1,16 @@
 package upei.project;
 
 public class GameBoard {
-    private static final Block[][] board = new Block[10][10];  // 2D array for the board (static)
+    private static  Block[][] board = new Block[10][10];  // 2D array for the board (static)
     public Player[] players; //
     // Constructor (no longer needed for static fields, but still good to initialize the board)
     public GameBoard() {
         initializeBoard();
+    }
+
+    public static Object[][] getBoard()
+    {
+        return board;
     }
 
     // initialize with players
@@ -27,7 +32,7 @@ public class GameBoard {
                     block = new Fox(position);  // Create a Fox block
                 } else if (position == 6 || position == 9 || position == 21 || position == 41) {
                     block = new Crow(position);  // Create a Crow block
-                } else if (position == 99 || position == 79 || position == 29 || position == 38) {
+                } else if (position == 100 || position == 79 || position == 29 || position == 38) {
                     block = new Bear(position,this);  // Create a Bear block
                 } else if (position==4 || position==10 || position==14|| position==44 || position ==65|| position==85) {
                     block=new PowerUp(position);
@@ -46,6 +51,11 @@ public class GameBoard {
 
     // Get a block by its position (1 to 100)
     public static Block getBlock(int position) {
+        // One case player reaches the end of the game
+        if (position==101)
+        {
+            return board[9][9];
+        }
         if (position >= 1 && position <= 100) {
             int row = (position - 1) / 10;  // Get the row (0-based)
             int col = (position - 1) % 10;  // Get the column (0-based)
@@ -83,13 +93,13 @@ public class GameBoard {
 
 
 
-    // Print the board for debugging purposes
-    public void printBoard() {
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
-                System.out.print(board[row][col] + "\t");
-            }
-            System.out.println();
-        }
-    }
+//    // Print the board for debugging purposes
+//    public void printBoard() {
+//        for (int row = 0; row < 10; row++) {
+//            for (int col = 0; col < 10; col++) {
+//                System.out.print(board[row][col] + "\t");
+//            }
+//            System.out.println();
+//        }
+//    }
 }
