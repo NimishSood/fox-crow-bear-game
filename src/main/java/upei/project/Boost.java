@@ -47,22 +47,23 @@ public class Boost extends Block{
                     int targetPlayerPosition = pl.getCurrentPosition().getPosition();
                     if (targetPlayerPosition - 2 < 1) {
                         targetPlayerPosition = 1;
-                        Block newBlock = GameBoard.getBlock(1);
+                        Block newBlock = GameBoard.getBlock(targetPlayerPosition);
                         pl.setPosition(newBlock);
                     }
                     else {
                         targetPlayerPosition = targetPlayerPosition -2;
                         Block newBlock = GameBoard.getBlock(targetPlayerPosition);
                         pl.setPosition(newBlock);
+                        System.out.println("The "+pl.getName()+ " was punched down to "+newBlock.getPosition());
                         // apply effects
                         newBlock.applyEffect(pl);
                     }
                 }
 
-                if (!foundPlayer) {
-                    System.out.println("The player was not found");
-                }
+            }
 
+            if (!foundPlayer) {
+                System.out.println("The player you want to punch does not exist! NEXT!");
             }
 
         } else if (decision.equals("move")) {

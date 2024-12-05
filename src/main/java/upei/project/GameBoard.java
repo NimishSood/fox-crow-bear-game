@@ -27,9 +27,10 @@ public class GameBoard {
                 Block block;  // Declare a Block reference
 
                 // Customize special blocks (for now just set some fixed ones for testing)
+
                 if (position == 5 || position == 15 || position == 25 || position == 30 ||
-                        position == 35 || position == 40 || position == 45 || position == 50) {
-                    block = new Fox(position);  // Create a Fox block
+                        position == 35 ||  position == 40 || position == 45 || position == 50) {
+                    block = new Fox(position);  // Create a Fox  block
                 } else if (position == 6 || position == 9 || position == 21 || position == 41) {
                     block = new Crow(position);  // Create a Crow block
                 } else if (position == 100 || position == 79 || position == 29 || position == 38) {
@@ -40,7 +41,12 @@ public class GameBoard {
                     block = new PowerDown(position);
                 }else if (position==7 || position==17 || position==36|| position==76 || position ==82|| position==91) {
                     block = new Luck(position);
-                }else {
+                }
+                // Boost block
+                else if (position == 3 || position == 13 || position == 23 || position == 33){
+                    block = new Boost(position, this);
+                }
+                else {
                     block = new Block(position, "Regular");  // Default to Regular block
                 }
 
