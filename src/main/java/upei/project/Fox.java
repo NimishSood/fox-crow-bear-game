@@ -30,12 +30,9 @@ public class Fox extends Block
             // Move the player to the new block
             player.setPosition(newBlock);
             // Apply effect to the new set position
-            if (newBlock instanceof Fox || newBlock instanceof  Crow || newBlock instanceof Bear) {
-                newBlock.applyEffect(player);
-            }
-            else {
-                System.out.println(player.getName() + " moves to " + newBlock);
-            }
+            System.out.println(player.getName() + " moves to " + newBlock);
+            newBlock.applyEffect(player);
+
         }
     }
 }

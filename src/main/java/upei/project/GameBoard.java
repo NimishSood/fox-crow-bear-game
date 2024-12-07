@@ -1,5 +1,8 @@
 package upei.project;
 
+import java.util.HashMap;
+import java.util.function.Function;
+
 public class GameBoard {
     private static  Block[][] board = new Block[10][10];  // 2D array for the board (static)
     public Player[] players; //
@@ -18,42 +21,60 @@ public class GameBoard {
         initializeBoard();
         this.players = players;
     }
+    private static final HashMap<Integer, Function<Integer, Block>> BLOCK_CONFIG = new HashMap<>();
 
+    {
+        BLOCK_CONFIG.put(3, pos -> new Boost(pos, this));
+        BLOCK_CONFIG.put(5, Fox::new);
+        BLOCK_CONFIG.put(7, Luck::new);
+        BLOCK_CONFIG.put(10, PowerUp::new);
+        BLOCK_CONFIG.put(15, Fox::new);
+        BLOCK_CONFIG.put(19, PowerDown::new);
+
+        // Mid game
+        BLOCK_CONFIG.put(23, pos -> new Boost(pos, this));
+        BLOCK_CONFIG.put(25, Luck::new);
+        BLOCK_CONFIG.put(27, PowerUp::new);
+        BLOCK_CONFIG.put(33, pos -> new Boost(pos, this));
+        BLOCK_CONFIG.put(35, Crow::new);
+        BLOCK_CONFIG.put(38, PowerDown::new);
+        BLOCK_CONFIG.put(45, PowerUp::new);
+        BLOCK_CONFIG.put(48, Crow::new);
+        BLOCK_CONFIG.put(50, PowerUp::new);
+        BLOCK_CONFIG.put(56, Crow::new);
+        BLOCK_CONFIG.put(59, PowerDown::new);
+
+        // Late game
+        BLOCK_CONFIG.put(65, PowerUp::new);
+        BLOCK_CONFIG.put(67, Fox::new);
+        BLOCK_CONFIG.put(70, PowerDown::new);
+        BLOCK_CONFIG.put(75, PowerUp::new);
+        BLOCK_CONFIG.put(78, Luck::new);
+        BLOCK_CONFIG.put(79, PowerDown::new);
+        BLOCK_CONFIG.put(85, PowerUp::new);
+        BLOCK_CONFIG.put(87, PowerDown::new);
+        BLOCK_CONFIG.put(89, Luck::new);
+        BLOCK_CONFIG.put(95, Fox::new);
+        BLOCK_CONFIG.put(98, PowerUp::new);
+        BLOCK_CONFIG.put(100, pos -> new Bear(pos, this));  // Final challenge
+    }
     private void initializeBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
-                int position = row * 10 + (col + 1);  // Mapping to 1 to 100 position
+                int position = row * 10 + (col + 1);  // Calculate position from row and column
 
-                Block block;  // Declare a Block reference
+                // Use the map to create blocks, or default to Regular block
+                Block block = BLOCK_CONFIG.getOrDefault(position,
+                        pos -> new Block(pos, "Regular")).apply(position);
 
-                // Customize special blocks (for now just set some fixed ones for testing)
-
-                if (position == 5 || position == 15 || position == 25 || position == 30 ||
-                        position == 35 ||  position == 40 || position == 45 || position == 50) {
-                    block = new Fox(position);  // Create a Fox  block
-                } else if (position == 6 || position == 9 || position == 21 || position == 41) {
-                    block = new Crow(position);  // Create a Crow block
-                } else if (position == 100 || position == 79 || position == 29 || position == 38) {
-                    block = new Bear(position,this);  // Create a Bear block
-                } else if (position==4 || position==10 || position==14|| position==44 || position ==65|| position==85) {
-                    block=new PowerUp(position);
-                }else if (position==8 || position==11 || position==16|| position==46 || position ==66|| position==86) {
-                    block = new PowerDown(position);
-                }else if (position==7 || position==17 || position==36|| position==76 || position ==82|| position==91) {
-                    block = new Luck(position);
-                }
-                // Boost block
-                else if (position == 3 || position == 13 || position == 23 || position == 33){
-                    block = new Boost(position, this);
-                }
-                else {
-                    block = new Block(position, "Regular");  // Default to Regular block
-                }
-
-                board[row][col] = block;  // Set the block in the 2D array
+                board[row][col] = block;  // Assign the block to the board
             }
         }
     }
+
+
+
+
 
     // Get a block by its position (1 to 100)
     public static Block getBlock(int position) {
@@ -95,17 +116,4 @@ public class GameBoard {
         }
     }
 
-
-
-
-
-//    // Print the board for debugging purposes
-//    public void printBoard() {
-//        for (int row = 0; row < 10; row++) {
-//            for (int col = 0; col < 10; col++) {
-//                System.out.print(board[row][col] + "\t");
-//            }
-//            System.out.println();
-//        }
-//    }
 }

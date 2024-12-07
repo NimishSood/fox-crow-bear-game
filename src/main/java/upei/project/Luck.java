@@ -13,6 +13,8 @@ public class Luck extends Block
         {
             System.out.println("Lucky block! "+player.getName()+" gets +1 luck \nCurrent Luck: "+(player.getLuck() +1));
             player.setLuck(player.getLuck() + 1);
+            System.out.println(player.getName()+"'s Dice size increased to "+(5+player.getLuck())+"!");
+
         }
         else
         {

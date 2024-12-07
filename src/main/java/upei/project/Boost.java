@@ -16,7 +16,7 @@ public class Boost extends Block{
     GameBoard currentBoard;
 
     public Boost(int position, GameBoard board) {
-        super(position, "board");
+        super(position, "Boost");
         this.currentBoard = board;
     }
 
@@ -78,7 +78,7 @@ public class Boost extends Block{
                         targetPlayerPosition = targetPlayerPosition -2;
                         Block newBlock = GameBoard.getBlock(targetPlayerPosition);
                         pl.setPosition(newBlock);
-                        System.out.println("The "+pl.getName()+ " was punched down to "+newBlock.getPosition());
+                        System.out.println(pl.getName()+ " was punched down to "+newBlock.getPosition());
                         // apply effects
                         newBlock.applyEffect(pl);
                     }

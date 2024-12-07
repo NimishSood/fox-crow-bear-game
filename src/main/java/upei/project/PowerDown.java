@@ -13,7 +13,7 @@ public class PowerDown extends Block{
             player.setPower(player.getPower() - 1);
             System.out.println(player.getName() + " Current Power Level: " + player.getPower());
         }else {
-            System.out.println("Didn't know it was possible to be this weak. Can't power down "+player.getName()+"further. \nCurrent Power level: 1");
+            System.out.println("Didn't know it was possible to be this weak. Can't power down "+player.getName()+" further. \nCurrent Power level: 1");
         }
     }
 }

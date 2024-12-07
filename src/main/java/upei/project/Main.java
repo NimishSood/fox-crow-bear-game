@@ -1,5 +1,6 @@
 package upei.project;
 
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -45,14 +46,44 @@ public class Main {
 
         scanner.close();
     }
+    static int diceCalculator(Player player)
+    {
+        int diceroll = 0;
+        switch (player.getLuck())
+        {
+            case 1:
+                diceroll=(int) (Math.random() * 6)+1;
+                break;
+            case 2:
+                diceroll=(int)(Math.random()*7)+1;
+                break;
+            case 3:
+                diceroll=(int)(Math.random()*8)+1;
+                break;
+            case 4:
+                diceroll=(int)(Math.random()*9)+1;
+                break;
+            case 5:
+                diceroll=(int)(Math.random()*10)+1;
+                break;
+
+        }
+
+
+        return diceroll;
+    }
 
     // Method to handle a player's turn
     private static void takeTurn(Player player, Scanner scanner, GameBoard board) {
         // Simulate dice roll (1 to 6)
-        int diceRoll = (int) (Math.random() * 6) + 1;
-        System.out.println(player.getName() + " rolls the dice: " + diceRoll);
+//        int diceRoll = (int) (Math.random() * 6) + 1;
+        int diceOutcome=diceCalculator(player);
+
+        System.out.println(player.getName() + " rolls the dice: " + diceOutcome);
 
         // Player takes their turn with the dice roll
-        player.takeTurn(diceRoll, board);
+        player.takeTurn(diceOutcome, board);
     }
+
+
 }
