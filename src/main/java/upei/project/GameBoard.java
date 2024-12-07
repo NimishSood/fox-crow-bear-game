@@ -24,7 +24,7 @@ public class GameBoard {
     private static final HashMap<Integer, Function<Integer, Block>> BLOCK_CONFIG = new HashMap<>();
 
     {
-        BLOCK_CONFIG.put(3, pos -> new Boost(pos, this));
+        BLOCK_CONFIG.put(3, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(5, Fox::new);
         BLOCK_CONFIG.put(7, Luck::new);
         BLOCK_CONFIG.put(10, PowerUp::new);
@@ -32,10 +32,10 @@ public class GameBoard {
         BLOCK_CONFIG.put(19, PowerDown::new);
 
         // Mid game
-        BLOCK_CONFIG.put(23, pos -> new Boost(pos, this));
+        BLOCK_CONFIG.put(23, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(25, Luck::new);
         BLOCK_CONFIG.put(27, PowerUp::new);
-        BLOCK_CONFIG.put(33, pos -> new Boost(pos, this));
+        BLOCK_CONFIG.put(33, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(35, Crow::new);
         BLOCK_CONFIG.put(38, PowerDown::new);
         BLOCK_CONFIG.put(45, PowerUp::new);

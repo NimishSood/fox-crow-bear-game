@@ -125,9 +125,9 @@ public class Player {
         else if (newBlock instanceof Luck) {
             Luck luckBlock = (Luck) newBlock;
             luckBlock.applyEffect(this);
-        } else if (newBlock instanceof Boost) {
-            Boost boostBlock = (Boost) newBlock;
-            boostBlock.applyEffect(this);
+        } else if (newBlock instanceof Special) {
+            Special specialBlock = (Special) newBlock;
+            specialBlock.applyEffect(this);
 
         } else {
             newBlock.applyEffect(this);
