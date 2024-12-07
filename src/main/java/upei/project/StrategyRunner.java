@@ -1,44 +1,79 @@
 package upei.project;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class StrategyRunner {
-    private static final int GAME_RUNS = 20;
+    private static String globalStrategy = null; // Default to manual mode
 
-    public static void main(String[] args) {
-        // Strategies to test
-        String[] strategies = {"BOOST", "PUNCH_NEAREST"};
+    public static final int GAME_RUNS = 20;
 
-        for (String strategy : strategies) {
-            System.out.println("\n--- Running 20 games with strategy: " + strategy + " ---");
-
-            // Store results
-            HashMap<String, Integer> results = new HashMap<>();
-            results.put("Aditya", 0);
-            results.put("Nimish", 0);
-            results.put("Harsh", 0);
-            results.put("Govind", 0);
-
-            // Set strategy for Special block
-            Special.setGlobalStrategy(strategy);
-
-            // Run 20 games
-            for (int i = 1; i <= GAME_RUNS; i++) {
-                String winner = runSingleGame(strategy);
-                results.put(winner, results.get(winner) + 1);
-                System.out.println("Game " + i + " Winner: " + winner);
-            }
-
-            // Print final results
-            System.out.println("\n--- Results for strategy: " + strategy + " ---");
-            for (String player : results.keySet()) {
-                System.out.println(player + " won " + results.get(player) + " times.");
-            }
+    /**
+     * Sets the global strategy for the game.
+     * This will influence how the Special block behaves during gameplay.
+     *
+     * @param strategy The strategy to set ("BOOST", "PUNCH_NEAREST", or null for manual mode)
+     */
+    public static void setGlobalStrategy(String strategy) {
+        globalStrategy = strategy;
+        Special.setGlobalStrategy(strategy);
+        if (strategy == null) {
+            System.out.println("Strategy set to manual mode.");
+        } else {
+            System.out.println("Global strategy set to: " + strategy);
         }
     }
 
-    private static String runSingleGame(String strategy) {
-        // Initialize the game board
+    /**
+     * Gets the current global strategy.
+     *
+     * @return The current global strategy.
+     */
+    public static String getGlobalStrategy() {
+        return globalStrategy;
+    }
+
+    /**
+     * Runs automated games based on the specified strategy and returns results.
+     *
+     * @param strategy The strategy to use for the games ("BOOST" or "PUNCH_NEAREST").
+     * @return A map containing the win counts for each player.
+     */
+    public static Map<String, Integer> runStrategyGames(String strategy) {
+        // Remove existing `System.out.println` and collect output for GUI
+        StringBuilder output = new StringBuilder();
+        output.append("\n--- Running ").append(GAME_RUNS).append(" games with strategy: ").append(strategy).append(" ---\n");
+
+        HashMap<String, Integer> results = new HashMap<>();
+        results.put("Aditya", 0);
+        results.put("Nimish", 0);
+        results.put("Harsh", 0);
+        results.put("Govind", 0);
+
+        setGlobalStrategy(strategy);
+
+        for (int i = 1; i <= GAME_RUNS; i++) {
+            String winner = runSingleGame();
+            results.put(winner, results.get(winner) + 1);
+            output.append("Game ").append(i).append(" Winner: ").append(winner).append("\n");
+        }
+
+        output.append("\n--- Results for strategy: ").append(strategy).append(" ---\n");
+        results.forEach((player, wins) ->
+                output.append(player).append(" won ").append(wins).append(" times.\n")
+        );
+
+        setGlobalStrategy(null); // Reset to manual mode
+        System.out.println(output.toString()); // Optional for debugging
+        return results;
+    }
+
+    /**
+     * Runs a single game with the current strategy.
+     *
+     * @return The name of the winning player.
+     */
+    private static String runSingleGame() {
         GameBoard gameBoard = new GameBoard();
 
         // Create players
@@ -47,45 +82,45 @@ public class StrategyRunner {
         Player player3 = new Player("Harsh");
         Player player4 = new Player("Govind");
 
-        // Store players in an array
+        // Add players to the game
         Player[] players = {player1, player2, player3, player4};
         gameBoard.players = players;
 
-        // Run the game
-        boolean gameOver = false;
-        while (!gameOver) {
+        // Play the game
+        while (true) {
             for (Player player : players) {
                 int diceOutcome = diceCalculator(player);
                 player.takeTurn(diceOutcome, gameBoard);
 
-                // Check if the player has reached position 100
+                // Check if the player has reached the goal
                 if (player.getCurrentPosition().getPosition() == 100) {
                     return player.getName();
                 }
             }
         }
-        return null; // This should never happen
     }
 
+
+    /**
+     * Simulates a dice roll based on the player's luck level.
+     *
+     * @param player The player rolling the dice.
+     * @return The outcome of the dice roll.
+     */
     private static int diceCalculator(Player player) {
-        int diceRoll = 0;
         switch (player.getLuck()) {
             case 1:
-                diceRoll = (int) (Math.random() * 6) + 1;
-                break;
+                return (int) (Math.random() * 6) + 1;
             case 2:
-                diceRoll = (int) (Math.random() * 7) + 1;
-                break;
+                return (int) (Math.random() * 7) + 1;
             case 3:
-                diceRoll = (int) (Math.random() * 8) + 1;
-                break;
+                return (int) (Math.random() * 8) + 1;
             case 4:
-                diceRoll = (int) (Math.random() * 9) + 1;
-                break;
+                return (int) (Math.random() * 9) + 1;
             case 5:
-                diceRoll = (int) (Math.random() * 10) + 1;
-                break;
+                return (int) (Math.random() * 10) + 1;
+            default:
+                return 1;
         }
-        return diceRoll;
     }
 }

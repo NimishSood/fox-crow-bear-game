@@ -4,29 +4,26 @@ import java.util.Scanner;
 
 public class Special extends Block {
     private final GameBoard currentBoard;
-
-    // Global strategy for all players in automated runs
-    private static String globalStrategy = "MANUAL"; // Default strategy
+    private static String globalStrategy = null; // Holds the current strategy ("BOOST" or "PUNCH_NEAREST")
 
     public Special(int position, GameBoard board) {
         super(position, "Special");
         this.currentBoard = board;
     }
 
-    // Method to set the global strategy
-    public static void setGlobalStrategy(String strategy) {
-        System.out.println("Global strategy set to: " + strategy);
-        globalStrategy = strategy.toUpperCase();
+    // Dynamically determines behavior based on global strategy
+    public void applyEffect(Player player) {
+        if (globalStrategy != null) {
+            // Use the global strategy if it's set
+            applyEffect(player, globalStrategy);
+        } else {
+            // Default interactive mode for manual gameplay
+            applyInteractiveEffect(player);
+        }
     }
 
-    // Overloaded method for manual gameplay
-    public void applyEffect(Player player) {
-        if (!globalStrategy.equals("MANUAL")) {
-            // If the global strategy is active, redirect to strategy-based behavior
-            applyEffect(player, globalStrategy);
-            return;
-        }
-
+    // Interactive mode for manual gameplay
+    private void applyInteractiveEffect(Player player) {
         System.out.println("Special block! " + player.getName() + " has a choice to make!");
 
         Scanner keyboardInput = new Scanner(System.in);
@@ -55,22 +52,16 @@ public class Special extends Block {
         }
     }
 
-    // New method for strategy-based behavior
+    // Strategy-based behavior
     public void applyEffect(Player player, String strategy) {
-        System.out.println("Special block! " + player.getName() + " is executing strategy: " + strategy);
+        System.out.println("Special block! " + player.getName() + " has triggered a special action!");
 
-        switch (strategy) {
-            case "BOOST":
-                boostPlayer(player);
-                break;
-
-            case "PUNCH_NEAREST":
-                punchNearestPlayer(player);
-                break;
-
-            default:
-                System.out.println("Unknown strategy: " + strategy + ". No action performed.");
-                break;
+        if ("BOOST".equalsIgnoreCase(strategy)) {
+            boostPlayer(player);
+        } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
+            punchNearestPlayer(player);
+        } else {
+            System.out.println("Unknown strategy: " + strategy);
         }
     }
 
@@ -105,7 +96,7 @@ public class Special extends Block {
                 foundPlayer = true;
                 if (pl == player) {
                     System.out.println("You cannot punch yourself! Try again.");
-                    applyEffect(player);
+                    applyInteractiveEffect(player);
                     return;
                 }
                 executePunch(player, pl);
@@ -158,5 +149,11 @@ public class Special extends Block {
         System.out.println(target.getName() + " was punched down to position " + newBlock.getPosition());
 
         newBlock.applyEffect(target); // Apply effects of the new block
+    }
+
+    // Setter for global strategy
+    public static void setGlobalStrategy(String strategy) {
+        globalStrategy = strategy;
+        System.out.println("Global strategy set to: " + strategy);
     }
 }
