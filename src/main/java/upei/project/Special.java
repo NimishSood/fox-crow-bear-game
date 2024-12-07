@@ -13,84 +13,93 @@ public class Special extends Block {
     }
 
     public void applyEffect(Player player) {
-        System.out.println("Special block! " + player.getName() + " has the potential to push down a player!");
+        System.out.println("Special block! " + player.getName() + " has a choice to make!");
 
-        // Initialize the keyboard
         Scanner keyboardInput = new Scanner(System.in);
 
-        // Ask for a decision to make
-        System.out.println("You must punch another player. Enter the player's name:");
+        // Prompt the player to choose an action
+        System.out.println("Choose an action:");
+        System.out.println("1: Punch another player down");
+        System.out.println("2: Boost yourself up");
+
+        int choice = -1;
+        while (choice != 1 && choice != 2) {
+            try {
+                System.out.print("Enter your choice (1 or 2): ");
+                choice = Integer.parseInt(keyboardInput.nextLine().trim());
+
+                if (choice == 1) {
+                    punchAnotherPlayer(player, keyboardInput);
+                } else if (choice == 2) {
+                    boostPlayer(player);
+                } else {
+                    System.out.println("Invalid choice. Please choose 1 or 2.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1 or 2).");
+            }
+        }
+    }
+
+    private void punchAnotherPlayer(Player player, Scanner keyboardInput) {
+        System.out.println("You chose to punch another player! Enter the player's name:");
 
         // Display all players
         for (Player p : currentBoard.players) {
             System.out.println(p.getName() + ", Position: " + p.getCurrentPosition().getPosition());
         }
 
-        // Get the player's decision (who to punch)
         String playerName = keyboardInput.nextLine().trim();
         boolean foundPlayer = false;
 
-        // Iterate through all the players to find the punched player
         for (Player pl : currentBoard.players) {
             if (pl.getName().equalsIgnoreCase(playerName)) {
                 foundPlayer = true;
-                // Punch the selected player 2 blocks down
-                PunchDown(player, pl); // Call PunchDown method to punch the selected player
+                if (pl == player) {
+                    System.out.println("You cannot punch yourself! Try again.");
+                    applyEffect(player);
+                    return;
+                }
+                executePunch(player, pl);
                 break;
             }
         }
 
-        // If player is not found
         if (!foundPlayer) {
             System.out.println("Player not found! Please enter a valid name.");
-            applyEffect(player);  // Ask again if player not found
+            punchAnotherPlayer(player, keyboardInput);
         }
     }
 
-    // Method to punch a player down by the puncher's power level
-    public void PunchDown(Player player1, Player player2) {
-        if (player1.getName().equals(player2.getName())) {
-            // If the player tries to punch themselves
-            Scanner keyboardInput = new Scanner(System.in);
-            System.out.println("Are you sure you want to punch yourself?");
-            System.out.println("YES- CONFIRM\nNO- Start Over");
+    private void executePunch(Player puncher, Player target) {
+        System.out.println(puncher.getName() + " decided to punch " + target.getName() + " down!");
+        System.out.println(puncher.getName() + ", Power level: " + puncher.getPower());
 
-            // Get the decision from the player
-            String decision = keyboardInput.nextLine().trim();
-
-            if (decision.equalsIgnoreCase("no")) {
-                // Cancel the punch and return to the current block
-                Block newBlock = GameBoard.getBlock(player1.getCurrentPosition().getPosition());
-                newBlock.applyEffect(player1); // Apply the block's effects
-                return;
-            } else if (!decision.equalsIgnoreCase("yes")) {
-                // Invalid input, ask again
-                System.out.println("Please enter a valid command.");
-                PunchDown(player1, player2); // Recurse to ask again
-                return;
-            }
+        int newPosition = target.getCurrentPosition().getPosition() - puncher.getPower();
+        if (newPosition < 1) {
+            newPosition = 1;
         }
 
-        System.out.println(player1.getName() + " decided to punch " + player2.getName() + " down!");
-        System.out.println(player1.getName() + ", Power level: " + player1.getPower());
+        Block newBlock = GameBoard.getBlock(newPosition);
+        target.setPosition(newBlock);
+        System.out.println(target.getName() + " was punched down to position " + newBlock.getPosition());
 
-        // Get the current position of the punched player
-        int player2Position = player2.getCurrentPosition().getPosition();
-        player2Position -= player1.getPower();  // Move the player down by puncher's power level
+        newBlock.applyEffect(target);
+    }
 
-        // Ensure the position doesn't go below 1
-        if (player2Position < 1) {
-            player2Position = 1;  // Set to position 1 if below
+    private void boostPlayer(Player player) {
+        System.out.println(player.getName() + " decided to boost themselves up!");
+        System.out.println(player.getName() + ", Power level: " + player.getPower());
+
+        int newPosition = player.getCurrentPosition().getPosition() + player.getPower();
+        if (newPosition > 100) {
+            newPosition = 100;
         }
 
-        // Set the new position for the punched player
-        Block newBlock = GameBoard.getBlock(player2Position);
-        player2.setPosition(newBlock);
+        Block newBlock = GameBoard.getBlock(newPosition);
+        player.setPosition(newBlock);
+        System.out.println(player.getName() + " boosted up to position " + newBlock.getPosition());
 
-        // Print the movement
-        System.out.println(player2.getName() + " was punched down to position " + newBlock.getPosition());
-
-        // Apply the block's effects
-        newBlock.applyEffect(player2);
+        newBlock.applyEffect(player);
     }
 }

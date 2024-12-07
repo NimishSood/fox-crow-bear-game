@@ -66,10 +66,7 @@ public class Main {
             case 5:
                 diceroll=(int)(Math.random()*10)+1;
                 break;
-
         }
-
-
         return diceroll;
     }
 
@@ -84,6 +81,4 @@ public class Main {
         // Player takes their turn with the dice roll
         player.takeTurn(diceOutcome, board);
     }
-
-
 }
