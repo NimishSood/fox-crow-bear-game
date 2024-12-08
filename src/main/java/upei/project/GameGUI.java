@@ -125,7 +125,7 @@ public class GameGUI {
 
             log("About Strategies:\n");
             log("* BOOST: When hitting a special block, the player will always choose to boost forward.\n");
-            log("* PUNCH_NEAREST: When hitting a special block, the player will always punch the nearest player.\n");
+            log("* PUNCH_NEAREST: When hitting a special block, the player will always punch the player who is closest to the final block.\n");
             log("Running strategies simulates multiple automated games to see who wins most often.\n\n");
         });
 

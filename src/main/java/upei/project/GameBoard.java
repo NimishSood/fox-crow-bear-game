@@ -44,6 +44,9 @@ public class GameBoard {
         BLOCK_CONFIG.put(35, PowerDown::new);
         BLOCK_CONFIG.put(38, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(40, PowerUp::new);
+        BLOCK_CONFIG.put(91, PowerUp::new);
+        BLOCK_CONFIG.put(93, PowerUp::new);
+        BLOCK_CONFIG.put(96, PowerUp::new);
         BLOCK_CONFIG.put(45, Crow::new);
         BLOCK_CONFIG.put(48, Luck::new);
         BLOCK_CONFIG.put(50, pos -> new Special(pos, this));
