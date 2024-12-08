@@ -3,6 +3,9 @@ package upei.project;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base class for any block on the board.
+ */
 public class Block {
     private final int position;
     private final String type;
@@ -38,7 +41,6 @@ public class Block {
     }
 
     public void applyEffect(Player player) {
-        // Regular block: no special effect
         GameGUI.getInstance().log(">> Regular block: No effect.\n");
     }
 

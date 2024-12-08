@@ -4,13 +4,16 @@ import javax.swing.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.Map;
 
+/**
+ * Main class runs manual games, prompts user, runs strategy experiments,
+ * displays final stats and results.
+ */
 public class Main {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             GameGUI gameGUI = GameGUI.getInstance();
 
-            // Manual Game Action
             gameGUI.addManualGameAction(() -> {
                 logToAll(gameGUI, "Starting manual game setup...\n");
                 int playerCount = promptForPlayerCount(gameGUI);
@@ -28,7 +31,6 @@ public class Main {
                 new Thread(() -> runManualGame(gameGUI, playerNames)).start();
             });
 
-            // Strategy Actions
             gameGUI.addStrategyAction("BOOST", () -> {
                 int runs = promptForStrategyRuns(gameGUI, "BOOST");
                 if (runs == 0) {
@@ -51,7 +53,6 @@ public class Main {
                 displayExtendedResultsInGUI(gameGUI, result);
             });
 
-            // Reset
             gameGUI.addResetAction(() -> {
                 gameGUI.reset();
                 gameGUI.updateBoardDisplay();
@@ -91,7 +92,7 @@ public class Main {
         return names;
     }
 
-    private static int promptForStrategyRuns(GameGUI gameGUI, String strategyName) {
+    static int promptForStrategyRuns(GameGUI gameGUI, String strategyName) {
         while (true) {
             String input = JOptionPane.showInputDialog(null, "How many times do you want to run the " + strategyName + " strategy?", "Strategy Runs", JOptionPane.QUESTION_MESSAGE);
             if (input == null) {
@@ -278,7 +279,7 @@ public class Main {
         };
     }
 
-    private static void displayExtendedResultsInGUI(GameGUI gameGUI, StrategyResult result) {
+    static void displayExtendedResultsInGUI(GameGUI gameGUI, StrategyResult result) {
         Map<String,Integer> wins = result.getWins();
         Map<String,Integer> usage = result.getUsage();
         int runs = result.getRuns();
@@ -288,7 +289,6 @@ public class Main {
         wins.forEach((player, w) -> logToAll(gameGUI, player + " won " + w + " times.\n"));
         logToAll(gameGUI, "\nStrategy run completed.\n");
 
-        // Show strategy usage analysis
         logToAll(gameGUI, "\n--- Strategy Usage Analysis ---\n");
         logToAll(gameGUI, "Strategy: " + strategy + "\n");
 

@@ -1,5 +1,8 @@
 package upei.project;
 
+/**
+ * PowerUp block increases player's power if less than 5.
+ */
 public class PowerUp extends Block {
     public PowerUp(int position) {
         super(position, "PowerUp");

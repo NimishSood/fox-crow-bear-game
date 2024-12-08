@@ -5,6 +5,9 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+/**
+ * The GUI for the game. Displays board, log messages, menus, and handles input.
+ */
 public class GameGUI {
     private static GameGUI instance;
 
@@ -46,7 +49,6 @@ public class GameGUI {
         mainFrame.setSize(1000, 600);
         mainFrame.setResizable(false);
 
-        // Put status at the bottom
         statusLabel = new JLabel("Ready");
         mainPanel.add(statusLabel, BorderLayout.SOUTH);
 
@@ -54,7 +56,7 @@ public class GameGUI {
             Image icon = Toolkit.getDefaultToolkit().getImage("resources/game_icon.png");
             mainFrame.setIconImage(icon);
         } catch (Exception e) {
-            // ignore
+            // ignore if no icon
         }
 
         logArea.setEditable(false);
@@ -72,7 +74,7 @@ public class GameGUI {
             JLabel banner = new JLabel(new ImageIcon("resources/banner.png"));
             mainPanel.add(banner, BorderLayout.NORTH);
         } catch (Exception e) {
-            // ignore if no banner
+            // no banner
         }
 
         boardPanel = new JPanel(new GridLayout(10, 10));
@@ -125,7 +127,7 @@ public class GameGUI {
 
             log("About Strategies:\n");
             log("* BOOST: When hitting a special block, the player will always choose to boost forward.\n");
-            log("* PUNCH_NEAREST: When hitting a special block, the player will always punch the player who is closest to the final block.\n");
+            log("* PUNCH_NEAREST: When hitting a special block, the player will always punch the nearest player.\n");
             log("Running strategies simulates multiple automated games to see who wins most often.\n\n");
         });
 
@@ -162,8 +164,35 @@ public class GameGUI {
         JMenu strategyMenu = new JMenu("Strategy");
         JMenuItem boostStrategyItem = new JMenuItem("Run BOOST Strategy");
         JMenuItem punchStrategyItem = new JMenuItem("Run PUNCH_NEAREST Strategy");
-        boostStrategyItem.addActionListener(e -> triggerAction("BOOST"));
-        punchStrategyItem.addActionListener(e -> triggerAction("PUNCH_NEAREST"));
+
+        // Instead of running strategy on EDT, run in background thread
+        boostStrategyItem.addActionListener(e -> {
+            int runs = Main.promptForStrategyRuns(GameGUI.getInstance(), "BOOST");
+            if (runs == 0) {
+                log(">> Strategy run canceled.\n");
+                return;
+            }
+            log(">> Running BOOST strategy for " + runs + " games...\n");
+
+            new Thread(() -> {
+                StrategyResult result = StrategyRunner.runStrategyGames("BOOST", runs);
+                SwingUtilities.invokeLater(() -> Main.displayExtendedResultsInGUI(GameGUI.getInstance(), result));
+            }).start();
+        });
+
+        punchStrategyItem.addActionListener(e -> {
+            int runs = Main.promptForStrategyRuns(GameGUI.getInstance(), "PUNCH_NEAREST");
+            if (runs == 0) {
+                log(">> Strategy run canceled.\n");
+                return;
+            }
+            log(">> Running PUNCH_NEAREST strategy for " + runs + " games...\n");
+
+            new Thread(() -> {
+                StrategyResult result = StrategyRunner.runStrategyGames("PUNCH_NEAREST", runs);
+                SwingUtilities.invokeLater(() -> Main.displayExtendedResultsInGUI(GameGUI.getInstance(), result));
+            }).start();
+        });
 
         strategyMenu.add(boostStrategyItem);
         strategyMenu.add(punchStrategyItem);
@@ -218,15 +247,12 @@ public class GameGUI {
             - Actions per win (how many times they had to boost/punch on average for each win).
             
             Interpreting the Results:
-            - A higher win count and high win rate suggests a strategy works well for that player.
-            - A high number of actions (boosts/punches) might indicate reliance on the strategy.
-            - Actions per win shows efficiency: fewer actions per win might mean the strategy is effective.
+            - A higher win count and high win rate suggests a strategy works well.
+            - A high number of actions might indicate reliance on the strategy.
+            - Actions per win shows efficiency: fewer actions per win might mean more effective strategy.
             
-            In manual games (where users choose actions at special blocks), at the end of the game,
-            you'll also see each player's final stats, including how many times they boosted or punched,
-            their final power, and luck levels.
-            
-            Use this info to understand how strategic choices influence outcomes and performance.
+            In manual games, at the end you see each player's final stats, including boosts/punches used,
+            power, and luck. This gives insight into how their choices affected the outcome.
             """;
         JOptionPane.showMessageDialog(mainFrame, info, "Strategy Info", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -263,25 +289,23 @@ public class GameGUI {
             log("----------------------------------------\n");
             log("Game reset. You can start a new game or test a strategy.\n");
             log("----------------------------------------\n\n");
-            // After reset, clear currentGame to ensure a fresh start
             GameBoard.currentGame = null;
             log("Welcome to the Fox, Crow & Bear Game!\n");
             log("----------------------------------------\n\n");
             log("This game is inspired by Snakes and Ladders, but with a twist:\n");
             log("Instead of snakes and ladders, you'll encounter special blocks:\n");
-            log("* Fox blocks: propel you forward based on your last dice roll.\n");
+            log("* Fox blocks: propel you forward.\n");
             log("* Crow blocks: carry you forward to the end of the current row.\n");
-            log("* Bear blocks: challenge your power; win and move ahead, lose and retreat!\n");
+            log("* Bear blocks: challenge your power.\n");
             log("* PowerUp blocks: increase your power.\n");
             log("* PowerDown blocks: decrease your power.\n");
             log("* Luck blocks: improve your luck.\n");
             log("* Special blocks: offer unique choices.\n\n");
             log("Your goal is still to reach block 100.\n");
             log("Use the menu above to start a manual game or run a strategy.\n\n");
-            // Strategy reminder after reset
             log("About Strategies:\n");
-            log("* BOOST: Always choose to boost on special blocks.\n");
-            log("* PUNCH_NEAREST: Always choose to punch on special blocks.\n");
+            log("* BOOST: Always choose to boost.\n");
+            log("* PUNCH_NEAREST: Always choose to punch.\n");
             log("Run multiple games to see which approach leads to more wins!\n\n");
             updateBoardDisplay();
         });
@@ -321,8 +345,6 @@ public class GameGUI {
     public void updateBoardDisplay() {
         SwingUtilities.invokeLater(() -> {
             if (GameBoard.currentGame == null) {
-                // If no current game, possibly show empty or default?
-                // For now, do nothing which means board stays as is without players.
                 return;
             }
 

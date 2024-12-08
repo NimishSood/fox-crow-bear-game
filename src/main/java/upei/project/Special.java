@@ -1,5 +1,8 @@
 package upei.project;
 
+/**
+ * Special block that, under a global strategy, applies either BOOST or PUNCH_NEAREST.
+ */
 public class Special extends Block {
     private final GameBoard currentBoard;
     private static String globalStrategy = null;
@@ -12,6 +15,8 @@ public class Special extends Block {
     public void applyEffect(Player player) {
         if (globalStrategy != null) {
             applyEffect(player, globalStrategy);
+        } else {
+            // If no global strategy, no forced action here. Manual game actions handled elsewhere.
         }
     }
 
@@ -19,10 +24,10 @@ public class Special extends Block {
         GameGUI.getInstance().log(">> Special block! " + player.getName() + " has triggered a special action!\n");
 
         if ("BOOST".equalsIgnoreCase(strategy)) {
-            player.incrementBoostCount(); // Track usage
+            player.incrementBoostCount();
             boostPlayer(player);
         } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
-            player.incrementPunchCount(); // Track usage
+            player.incrementPunchCount();
             punchNearestPlayer(player);
         } else {
             GameGUI.getInstance().log(">> Unknown strategy: " + strategy + "\n");

@@ -3,6 +3,9 @@ package upei.project;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Runs multiple strategy games and returns a StrategyResult with wins and usage stats.
+ */
 public class StrategyRunner {
     private static String globalStrategy = null;
 
@@ -15,32 +18,27 @@ public class StrategyRunner {
         return globalStrategy;
     }
 
-    // Now returns StrategyResult instead of just a Map
     public static StrategyResult runStrategyGames(String strategy, int runs) {
-        // Wins tracking
-        HashMap<String, Integer> results = new HashMap<>();
-        results.put("Aditya", 0);
-        results.put("Nimish", 0);
-        results.put("Harsh", 0);
-        results.put("Govind", 0);
+        Map<String,Integer> results = new HashMap<>();
+        results.put("Aditya",0);
+        results.put("Nimish",0);
+        results.put("Harsh",0);
+        results.put("Govind",0);
 
-        // Usage tracking
-        HashMap<String, Integer> usageCounts = new HashMap<>();
-        usageCounts.put("Aditya", 0);
-        usageCounts.put("Nimish", 0);
-        usageCounts.put("Harsh", 0);
-        usageCounts.put("Govind", 0);
+        Map<String,Integer> usage = new HashMap<>();
+        usage.put("Aditya",0);
+        usage.put("Nimish",0);
+        usage.put("Harsh",0);
+        usage.put("Govind",0);
 
         setGlobalStrategy(strategy);
 
         for (int i = 1; i <= runs; i++) {
             Player[] players = runSingleGamePlayers();
             String winner = determineWinner(players);
+            results.put(winner, results.get(winner) + 1);
 
-            // Update wins
-            results.put(winner, results.getOrDefault(winner, 0) + 1);
-
-            // Update usage based on strategy
+            // Accumulate usage based on chosen strategy
             for (Player p : players) {
                 int count = 0;
                 if ("BOOST".equalsIgnoreCase(strategy)) {
@@ -48,16 +46,18 @@ public class StrategyRunner {
                 } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
                     count = p.getPunchCount();
                 }
-                usageCounts.put(p.getName(), usageCounts.get(p.getName()) + count);
+                usage.put(p.getName(), usage.get(p.getName()) + count);
             }
         }
 
         setGlobalStrategy(null);
-
-        // Return everything in a StrategyResult object
-        return new StrategyResult(strategy, runs, results, usageCounts);
+        return new StrategyResult(strategy, runs, results, usage);
     }
 
+    @Deprecated
+    public static Map<String,Integer> runStrategyGames(String strategy) {
+        return runStrategyGames(strategy, 20).getWins();
+    }
 
     private static Player[] runSingleGamePlayers() {
         GameBoard gameBoard = new GameBoard();
@@ -68,7 +68,6 @@ public class StrategyRunner {
         Player player4 = new Player("Govind");
 
         Player[] players = {player1, player2, player3, player4};
-        // Set initial positions
         for (Player p : players) {
             p.setPosition(GameBoard.getBlock(1));
         }

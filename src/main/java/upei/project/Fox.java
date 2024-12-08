@@ -1,5 +1,8 @@
 package upei.project;
 
+/**
+ * Fox block propels the player forward by their last dice roll again.
+ */
 public class Fox extends Block {
     public Fox(int position) {
         super(position, "Fox");

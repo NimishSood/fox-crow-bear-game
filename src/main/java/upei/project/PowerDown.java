@@ -1,5 +1,8 @@
 package upei.project;
 
+/**
+ * PowerDown block decreases player's power if > 1.
+ */
 public class PowerDown extends Block {
     public PowerDown(int position) {
         super(position, "PowerDown");

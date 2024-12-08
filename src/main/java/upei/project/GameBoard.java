@@ -3,6 +3,9 @@ package upei.project;
 import java.util.HashMap;
 import java.util.function.Function;
 
+/**
+ * Represents the game board with 100 blocks and a configuration of special blocks.
+ */
 public class GameBoard {
     private static Block[][] board = new Block[10][10];
     public Player[] players;
@@ -44,9 +47,6 @@ public class GameBoard {
         BLOCK_CONFIG.put(35, PowerDown::new);
         BLOCK_CONFIG.put(38, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(40, PowerUp::new);
-        BLOCK_CONFIG.put(91, PowerUp::new);
-        BLOCK_CONFIG.put(93, PowerUp::new);
-        BLOCK_CONFIG.put(96, PowerUp::new);
         BLOCK_CONFIG.put(45, Crow::new);
         BLOCK_CONFIG.put(48, Luck::new);
         BLOCK_CONFIG.put(50, pos -> new Special(pos, this));
@@ -61,12 +61,15 @@ public class GameBoard {
         BLOCK_CONFIG.put(78, Luck::new);
         BLOCK_CONFIG.put(79, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(85, PowerUp::new);
+        BLOCK_CONFIG.put(91, PowerUp::new);
+        BLOCK_CONFIG.put(93, PowerUp::new);
+
         BLOCK_CONFIG.put(87, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(89, Fox::new);
-        BLOCK_CONFIG.put(95, Crow::new);
-        BLOCK_CONFIG.put(98, pos -> new Special(pos, this));
-        BLOCK_CONFIG.put(99, PowerUp::new);
-        BLOCK_CONFIG.put(100, pos -> new Bear(pos, this)); // Final challenge
+
+        BLOCK_CONFIG.put(90, pos -> new Bear(pos, this));
+        BLOCK_CONFIG.put(95, pos -> new Bear(pos, this)); // Final challenge
+
     }
 
     private void initializeBoard() {

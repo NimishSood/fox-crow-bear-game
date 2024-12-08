@@ -1,5 +1,8 @@
 package upei.project;
 
+/**
+ * Crow block picks the player up and moves them to end of the current row.
+ */
 public class Crow extends Block {
     public Crow(int position) {
         super(position, "Crow");
@@ -7,7 +10,7 @@ public class Crow extends Block {
 
     @Override
     public void applyEffect(Player player) {
-        GameGUI.getInstance().log(">> Caw caw! " + player.getName() + " is picked up by a crow! Leaving player to the end of row.\n");
+        GameGUI.getInstance().log(">> Caw caw! " + player.getName() + " is picked up by a crow! Moving to end of row.\n");
         int currentPos = player.getCurrentPosition().getPosition();
         int newPos;
         if (currentPos % 10 == 0) {
