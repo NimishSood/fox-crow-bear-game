@@ -1,136 +1,117 @@
 package upei.project;
 
 public class Player {
-    private final String name;           // Player's name
-    private Block currentPosition;       // Player's current position on the board
-    private int lastMove;                // Tracks the last dice roll
+    private final String name;
+    private Block currentPosition;
+    private int lastMove;
     private int power;
     private int luck;
-    // Constructor
+
+    // New counters for strategy usage
+    private int boostCount;
+    private int punchCount;
+
     public Player(String name) {
         this.name = name;
-        this.currentPosition = GameBoard.getBlock(1);  // All players start at position 1
-        this.lastMove = 0;  // No last move initially
-        currentPosition.addPlayer(this);  // Add player to the starting block
+        // currentPosition and GameBoard must be initialized first in Main now
         this.power = 1;
         this.luck = 1;
+        // No position set here, it will be set after GameBoard is ready
+        // in runManualGame or runSingleGame of StrategyRunner
     }
 
-    // Getter for the player's name
     public String getName() {
         return name;
     }
 
-    // Getter for the player's current position
     public Block getCurrentPosition() {
         return currentPosition;
     }
 
-    // Getter for lastMove (the dice roll)
     public int getLastMove() {
         return lastMove;
     }
 
-    // Setter for lastMove
     public void setLastMove(int lastMove) {
         this.lastMove = lastMove;
     }
 
-    // getter for power
     public int getPower() {
         return this.power;
     }
 
-    // getter for luck
     public int getLuck() {
         return this.luck;
     }
 
-    // setter for power
     public void setPower(int power) {
-        this.power = power;
-        if (this.power>5)
-        {
-            this.power=5;
-        } else if (this.power<1)
-        {
-            this.power=1;
-        }
+        this.power = Math.max(1, Math.min(power, 5));
     }
 
-    // setter for luck
     public void setLuck(int luck) {
-        this.luck = luck;
-        if(this.luck>5)
-        {
-            this.luck=5;
-        }
+        this.luck = Math.min(luck, 5);
     }
 
-    // Method to update the player's position
     public void setPosition(Block newBlock) {
-        // Remove the player from their current position
-        currentPosition.removePlayer(this);
-
-        // Set the new position
+        if (currentPosition != null) {
+            currentPosition.removePlayer(this);
+        }
         currentPosition = newBlock;
-
-        // Add the player to the new block
         newBlock.addPlayer(this);
     }
 
-    // Method to simulate taking a turn (e.g., rolling the dice)
     public void takeTurn(int diceRoll, GameBoard board) {
-        int currentPositionIndex = currentPosition.getPosition();  // Get the current position (1 to 100)
-        int newPositionIndex = currentPositionIndex + diceRoll;    // Add dice roll to position
-
-        // Set the player's last move (dice roll)
+        int currentPositionIndex = currentPosition.getPosition();
+        int newPositionIndex = currentPositionIndex + diceRoll;
         setLastMove(diceRoll);
 
-        // Check if the player exceeds the board limit and adjust if necessary
         if (newPositionIndex > 100) {
-            newPositionIndex = 100;  // Cap at the last position (100)
+            newPositionIndex = 100;
         } else if (newPositionIndex < 1) {
-            newPositionIndex = 1;    // Ensure it doesn't go below position 1
+            newPositionIndex = 1;
         }
 
-        // Get the new block based on the updated position
         Block newBlock = GameBoard.getBlock(newPositionIndex);
-
-        // Set the new position for the player
         setPosition(newBlock);
 
-        // Print player's movement
-        System.out.println(name + " moves to " + newBlock);
+        GameGUI.getInstance().log(">> " + name + " moves to " + newBlock + "\n");
 
-        // Apply any effects of the new block (e.g., Fox, Crow, Bear)
+        // Log player stats after moving
+        GameGUI.getInstance().log(">> " + name + " Stats: Power=" + power + ", Luck=" + luck + "\n");
+
         if (newBlock instanceof Fox) {
-            Fox foxBlock = (Fox) newBlock;
-            foxBlock.applyEffect(this);
-        }
-        else if (newBlock instanceof  Crow) {
-            Crow crowBlock = (Crow) newBlock;
-            crowBlock.applyEffect(this);
-        }
-        else if (newBlock instanceof Bear) {
-            Bear BearBlock = (Bear) newBlock;
-            BearBlock.applyEffect(this);
+            ((Fox) newBlock).applyEffect(this);
+        } else if (newBlock instanceof Crow) {
+            ((Crow) newBlock).applyEffect(this);
+        } else if (newBlock instanceof Bear) {
+            ((Bear) newBlock).applyEffect(this);
         } else if (newBlock instanceof PowerUp) {
-            PowerUp powerUp = (PowerUp) newBlock;
-            powerUp.applyEffect(this);
+            ((PowerUp) newBlock).applyEffect(this);
         } else if (newBlock instanceof PowerDown) {
-            PowerDown powerDown = (PowerDown) newBlock;
-            powerDown.applyEffect(this);
-        }
-        else if (newBlock instanceof Luck) {
-            Luck luckBlock = (Luck) newBlock;
-            luckBlock.applyEffect(this);
+            ((PowerDown) newBlock).applyEffect(this);
+        } else if (newBlock instanceof Luck) {
+            ((Luck) newBlock).applyEffect(this);
         } else if (newBlock instanceof Special) {
-            Special specialBlock = (Special) newBlock;
-            specialBlock.applyEffect(this);
-
+            ((Special) newBlock).applyEffect(this);
         } else {
             newBlock.applyEffect(this);
         }
+    }
+
+    // Increment counters when executing strategy actions
+    public void incrementBoostCount() {
+        boostCount++;
+    }
+
+    public void incrementPunchCount() {
+        punchCount++;
+    }
+
+    public int getBoostCount() {
+        return boostCount;
+    }
+
+    public int getPunchCount() {
+        return punchCount;
     }
 }

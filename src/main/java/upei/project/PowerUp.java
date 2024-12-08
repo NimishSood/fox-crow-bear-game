@@ -1,23 +1,18 @@
 package upei.project;
 
-public class PowerUp extends Block{
+public class PowerUp extends Block {
     public PowerUp(int position) {
         super(position, "PowerUp");
-        // Initial the PowerUp block
     }
 
     @Override
     public void applyEffect(Player player) {
-        if (player.getPower()<4)
-        {
-            System.out.println("Powerup block! "+player.getName()+" gets +1 power");
+        if (player.getPower() < 5) {
+            GameGUI.getInstance().log(">> Powerup block! " + player.getName() + " gets +1 power.\n");
             player.setPower(player.getPower() + 1);
-            System.out.println(player.getName()+" Current Power Level: "+player.getPower());
+            GameGUI.getInstance().log(">> " + player.getName() + " Current Power Level: " + player.getPower() + "\n");
+        } else {
+            GameGUI.getInstance().log(">> " + player.getName() + " is already at max power (5). No power up gained.\n");
         }
-        else
-        {
-            System.out.println("You are already too strong for the power up!");
-        }
-
     }
 }

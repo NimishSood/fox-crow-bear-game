@@ -1,73 +1,61 @@
 package upei.project;
 
-import java.util.Scanner;
-
 public class Special extends Block {
     private final GameBoard currentBoard;
-    private static String globalStrategy = null; // Holds the current strategy ("BOOST" or "PUNCH_NEAREST")
+    private static String globalStrategy = null;
 
     public Special(int position, GameBoard board) {
         super(position, "Special");
         this.currentBoard = board;
     }
 
-    // Dynamically determines behavior based on global strategy
     public void applyEffect(Player player) {
         if (globalStrategy != null) {
-            // Use the global strategy if it's set
             applyEffect(player, globalStrategy);
-        } else {
-            // Default interactive mode for manual gameplay
-            applyInteractiveEffect(player);
         }
     }
 
-    // Interactive mode for manual gameplay
-    private void applyInteractiveEffect(Player player) {
-        System.out.println("Special block! " + player.getName() + " has a choice to make!");
-
-        Scanner keyboardInput = new Scanner(System.in);
-
-        // Prompt the player to choose an action
-        System.out.println("Choose an action:");
-        System.out.println("1: Punch another player down");
-        System.out.println("2: Boost yourself up");
-
-        int choice = -1;
-        while (choice != 1 && choice != 2) {
-            try {
-                System.out.print("Enter your choice (1 or 2): ");
-                choice = Integer.parseInt(keyboardInput.nextLine().trim());
-
-                if (choice == 1) {
-                    punchAnotherPlayer(player, keyboardInput);
-                } else if (choice == 2) {
-                    boostPlayer(player);
-                } else {
-                    System.out.println("Invalid choice. Please choose 1 or 2.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number (1 or 2).");
-            }
-        }
-    }
-
-    // Strategy-based behavior
     public void applyEffect(Player player, String strategy) {
-        System.out.println("Special block! " + player.getName() + " has triggered a special action!");
+        GameGUI.getInstance().log(">> Special block! " + player.getName() + " has triggered a special action!\n");
 
         if ("BOOST".equalsIgnoreCase(strategy)) {
+            player.incrementBoostCount(); // Track usage
             boostPlayer(player);
         } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
+            player.incrementPunchCount(); // Track usage
             punchNearestPlayer(player);
         } else {
-            System.out.println("Unknown strategy: " + strategy);
+            GameGUI.getInstance().log(">> Unknown strategy: " + strategy + "\n");
         }
+    }
+
+    public boolean punchPlayerByName(Player currentPlayer, String targetName) {
+        boolean foundPlayer = false;
+        Player target = null;
+
+        for (Player pl : currentBoard.players) {
+            if (pl.getName().equalsIgnoreCase(targetName)) {
+                foundPlayer = true;
+                if (pl == currentPlayer) {
+                    GameGUI.getInstance().log(">> You cannot punch yourself!\n");
+                    return false;
+                }
+                target = pl;
+                break;
+            }
+        }
+
+        if (!foundPlayer) {
+            return false;
+        }
+
+        executePunch(currentPlayer, target);
+        return true;
     }
 
     private void boostPlayer(Player player) {
-        System.out.println(player.getName() + " chose to boost themselves up!");
-        System.out.println(player.getName() + ", Power level: " + player.getPower());
+        GameGUI.getInstance().log(">> " + player.getName() + " chose to boost themselves up!\n");
+        GameGUI.getInstance().log(">> " + player.getName() + ", Power level: " + player.getPower() + "\n");
 
         int newPosition = player.getCurrentPosition().getPosition() + player.getPower();
         if (newPosition > 100) {
@@ -76,42 +64,13 @@ public class Special extends Block {
 
         Block newBlock = GameBoard.getBlock(newPosition);
         player.setPosition(newBlock);
-        System.out.println(player.getName() + " boosted up to position " + newBlock.getPosition());
+        GameGUI.getInstance().log(">> " + player.getName() + " boosted up to position " + newBlock.getPosition() + "\n");
 
-        newBlock.applyEffect(player); // Apply effects of the new block
-    }
-
-    private void punchAnotherPlayer(Player player, Scanner keyboardInput) {
-        System.out.println("You chose to punch another player! Enter the player's name:");
-
-        for (Player p : currentBoard.players) {
-            System.out.println(p.getName() + ", Position: " + p.getCurrentPosition().getPosition());
-        }
-
-        String playerName = keyboardInput.nextLine().trim();
-        boolean foundPlayer = false;
-
-        for (Player pl : currentBoard.players) {
-            if (pl.getName().equalsIgnoreCase(playerName)) {
-                foundPlayer = true;
-                if (pl == player) {
-                    System.out.println("You cannot punch yourself! Try again.");
-                    applyInteractiveEffect(player);
-                    return;
-                }
-                executePunch(player, pl);
-                break;
-            }
-        }
-
-        if (!foundPlayer) {
-            System.out.println("Player not found! Please enter a valid name.");
-            punchAnotherPlayer(player, keyboardInput);
-        }
+        newBlock.applyEffect(player);
     }
 
     private void punchNearestPlayer(Player player) {
-        System.out.println(player.getName() + " is looking for the nearest player to punch!");
+        GameGUI.getInstance().log(">> " + player.getName() + " is looking for the nearest player to punch!\n");
 
         Player nearestPlayer = null;
         int minDistance = Integer.MAX_VALUE;
@@ -119,7 +78,6 @@ public class Special extends Block {
         for (Player p : currentBoard.players) {
             if (p != player) {
                 int distance = Math.abs(100 - p.getCurrentPosition().getPosition());
-
                 if (nearestPlayer == null || distance < minDistance ||
                         (distance == minDistance && p.getName().compareTo(nearestPlayer.getName()) < 0)) {
                     nearestPlayer = p;
@@ -131,13 +89,13 @@ public class Special extends Block {
         if (nearestPlayer != null) {
             executePunch(player, nearestPlayer);
         } else {
-            System.out.println("No valid target for punching!");
+            GameGUI.getInstance().log(">> No valid target for punching!\n");
         }
     }
 
     private void executePunch(Player puncher, Player target) {
-        System.out.println(puncher.getName() + " decided to punch " + target.getName() + " down!");
-        System.out.println(puncher.getName() + ", Power level: " + puncher.getPower());
+        GameGUI.getInstance().log(">> " + puncher.getName() + " decided to punch " + target.getName() + " down!\n");
+        GameGUI.getInstance().log(">> " + puncher.getName() + ", Power level: " + puncher.getPower() + "\n");
 
         int newPosition = target.getCurrentPosition().getPosition() - puncher.getPower();
         if (newPosition < 1) {
@@ -146,14 +104,12 @@ public class Special extends Block {
 
         Block newBlock = GameBoard.getBlock(newPosition);
         target.setPosition(newBlock);
-        System.out.println(target.getName() + " was punched down to position " + newBlock.getPosition());
+        GameGUI.getInstance().log(">> " + target.getName() + " was punched down to position " + newBlock.getPosition() + "\n");
 
-        newBlock.applyEffect(target); // Apply effects of the new block
+        newBlock.applyEffect(target);
     }
 
-    // Setter for global strategy
     public static void setGlobalStrategy(String strategy) {
         globalStrategy = strategy;
-        System.out.println("Global strategy set to: " + strategy);
     }
 }

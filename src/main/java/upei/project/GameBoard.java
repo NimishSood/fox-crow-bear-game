@@ -4,117 +4,106 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 public class GameBoard {
-    private static  Block[][] board = new Block[10][10];  // 2D array for the board (static)
-    public Player[] players; //
-    // Constructor (no longer needed for static fields, but still good to initialize the board)
+    private static Block[][] board = new Block[10][10];
+    public Player[] players;
+    public static GameBoard currentGame;
+
     public GameBoard() {
+        currentGame = this;
         initializeBoard();
     }
 
-    public static Object[][] getBoard()
-    {
-        return board;
-    }
-
-    // initialize with players
     public GameBoard(Player[] players) {
+        currentGame = this;
         initializeBoard();
         this.players = players;
     }
+
+    public static Object[][] getBoard() {
+        return board;
+    }
+
     private static final HashMap<Integer, Function<Integer, Block>> BLOCK_CONFIG = new HashMap<>();
 
     {
-        BLOCK_CONFIG.put(3, pos -> new Special(pos, this));
-        BLOCK_CONFIG.put(5, Fox::new);
-        BLOCK_CONFIG.put(7, Luck::new);
-        BLOCK_CONFIG.put(10, PowerUp::new);
-        BLOCK_CONFIG.put(15, Fox::new);
-        BLOCK_CONFIG.put(19, PowerDown::new);
+        // Early game
+        BLOCK_CONFIG.put(3, PowerUp::new);
+        BLOCK_CONFIG.put(5, Luck::new);
+        BLOCK_CONFIG.put(6, pos -> new Special(pos, this));
+        BLOCK_CONFIG.put(10, Fox::new);
+        BLOCK_CONFIG.put(12, Crow::new);
+        BLOCK_CONFIG.put(15, PowerDown::new);
+        BLOCK_CONFIG.put(18, pos -> new Special(pos, this));
 
         // Mid game
-        BLOCK_CONFIG.put(23, pos -> new Special(pos, this));
-        BLOCK_CONFIG.put(25, Luck::new);
-        BLOCK_CONFIG.put(27, PowerUp::new);
-        BLOCK_CONFIG.put(33, pos -> new Special(pos, this));
-        BLOCK_CONFIG.put(35, Crow::new);
-        BLOCK_CONFIG.put(38, PowerDown::new);
-        BLOCK_CONFIG.put(45, PowerUp::new);
-        BLOCK_CONFIG.put(48, Crow::new);
-        BLOCK_CONFIG.put(50, PowerUp::new);
-        BLOCK_CONFIG.put(56, Crow::new);
-        BLOCK_CONFIG.put(59, PowerDown::new);
+        BLOCK_CONFIG.put(23, Luck::new);
+        BLOCK_CONFIG.put(25, PowerUp::new);
+        BLOCK_CONFIG.put(27, Crow::new);
+        BLOCK_CONFIG.put(30, pos -> new Special(pos, this));
+        BLOCK_CONFIG.put(33, Fox::new);
+        BLOCK_CONFIG.put(35, PowerDown::new);
+        BLOCK_CONFIG.put(38, pos -> new Special(pos, this));
+        BLOCK_CONFIG.put(40, PowerUp::new);
+        BLOCK_CONFIG.put(45, Crow::new);
+        BLOCK_CONFIG.put(48, Luck::new);
+        BLOCK_CONFIG.put(50, pos -> new Special(pos, this));
+        BLOCK_CONFIG.put(58, pos -> new Bear(pos, this));
+        BLOCK_CONFIG.put(59, Fox::new);
 
         // Late game
         BLOCK_CONFIG.put(65, PowerUp::new);
-        BLOCK_CONFIG.put(67, Fox::new);
+        BLOCK_CONFIG.put(67, pos -> new Bear(pos, this));
         BLOCK_CONFIG.put(70, PowerDown::new);
-        BLOCK_CONFIG.put(75, PowerUp::new);
+        BLOCK_CONFIG.put(75, Crow::new);
         BLOCK_CONFIG.put(78, Luck::new);
-        BLOCK_CONFIG.put(79, PowerDown::new);
+        BLOCK_CONFIG.put(79, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(85, PowerUp::new);
+        BLOCK_CONFIG.put(87, pos -> new Special(pos, this));
+        BLOCK_CONFIG.put(89, Fox::new);
+        BLOCK_CONFIG.put(95, Crow::new);
+        BLOCK_CONFIG.put(98, pos -> new Special(pos, this));
         BLOCK_CONFIG.put(99, PowerUp::new);
-        BLOCK_CONFIG.put(87, PowerDown::new);
-        BLOCK_CONFIG.put(89, Luck::new);
-        BLOCK_CONFIG.put(95, Fox::new);
-        BLOCK_CONFIG.put(98, PowerUp::new);
-        BLOCK_CONFIG.put(100, pos -> new Bear(pos, this));  // Final challenge
+        BLOCK_CONFIG.put(100, pos -> new Bear(pos, this)); // Final challenge
     }
+
     private void initializeBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
-                int position = row * 10 + (col + 1);  // Calculate position from row and column
-
-                // Use the map to create blocks, or default to Regular block
+                int position = row * 10 + (col + 1);
                 Block block = BLOCK_CONFIG.getOrDefault(position,
                         pos -> new Block(pos, "Regular")).apply(position);
-
-                board[row][col] = block;  // Assign the block to the board
+                board[row][col] = block;
             }
         }
     }
 
-
-
-
-
-    // Get a block by its position (1 to 100)
     public static Block getBlock(int position) {
-        // One case player reaches the end of the game
-        if (position==101)
-        {
+        if (position == 101) {
             return board[9][9];
         }
         if (position >= 1 && position <= 100) {
-            int row = (position - 1) / 10;  // Get the row (0-based)
-            int col = (position - 1) % 10;  // Get the column (0-based)
-
-            return board[row][col];  // Return the corresponding block from the 2D array
+            int row = (position - 1) / 10;
+            int col = (position - 1) % 10;
+            return board[row][col];
         } else {
-            return null;  // Invalid position
+            return null;
         }
     }
 
     public void printBoardWithPlayers(Player[] players) {
-        System.out.println("Game Board:");
-
-        // Loop through each row and column
+        GameGUI.getInstance().log(">> Game Board:\n");
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Block block = board[row][col];
-
-                // Print the block type and players on the block
                 String blockType = block.getType();
                 String playersOnBlock = block.getPlayersInitials();
-
-                // Format the output to show both the block type and players
                 if (playersOnBlock.isEmpty()) {
-                    System.out.print(blockType.substring(0, 1) + "\t");  // Print only the first letter of block type
+                    GameGUI.getInstance().log(blockType.substring(0, 1) + "\t");
                 } else {
-                    System.out.print(playersOnBlock + "\t");  // Print player initials
+                    GameGUI.getInstance().log(playersOnBlock + "\t");
                 }
             }
-            System.out.println(); // Move to the next line after each row
+            GameGUI.getInstance().log("\n");
         }
     }
-
 }

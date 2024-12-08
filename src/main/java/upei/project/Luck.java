@@ -1,28 +1,18 @@
 package upei.project;
 
-public class Luck extends Block
-{
-    public Luck( int position)
-    {
-        super(position,"Lucky Place");
+public class Luck extends Block {
+    public Luck(int position) {
+        super(position, "Lucky Place");
     }
 
     @Override
     public void applyEffect(Player player) {
-        if (player.getLuck()<5)
-        {
-            System.out.println("Lucky block! "+player.getName()+" gets +1 luck \nCurrent Luck: "+(player.getLuck() +1));
+        if (player.getLuck() < 5) {
+            GameGUI.getInstance().log(">> Lucky block! " + player.getName() + " gets +1 luck.\nCurrent Luck: " + (player.getLuck() + 1) + "\n");
             player.setLuck(player.getLuck() + 1);
-            System.out.println(player.getName()+"'s Dice size increased to "+(5+player.getLuck())+"!");
-
+            GameGUI.getInstance().log(">> " + player.getName() + "'s Dice size increased!\n");
+        } else {
+            GameGUI.getInstance().log(">> You are already blessed enough, " + player.getName() + ". Luck stays at 5.\n");
         }
-        else
-        {
-            System.out.println("You are already blessed enough");
-
-        }
-
-
-
     }
 }
