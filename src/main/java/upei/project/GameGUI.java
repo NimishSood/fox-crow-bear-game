@@ -2,9 +2,13 @@ package upei.project;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+/**
+ * The GUI for the game. Displays board, log messages, menus, and handles input.
+ */
 public class GameGUI {
     private static GameGUI instance;
 
@@ -20,8 +24,8 @@ public class GameGUI {
     private JLabel[][] boardLabels;
     private JLabel statusLabel;
 
-    private javax.swing.Timer highlightTimer;
-    private boolean highlightState = false;
+    // Placeholder prompt text
+    private static final String INPUT_PROMPT = "Please enter your choice here...";
 
     public static GameGUI getInstance() {
         if (instance == null) {
@@ -63,6 +67,7 @@ public class GameGUI {
 
         inputField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         inputField.setBackground(Color.WHITE);
+        inputField.setForeground(Color.BLACK);
 
         mainFrame.getContentPane().setBackground(Color.LIGHT_GRAY);
         logScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -115,7 +120,7 @@ public class GameGUI {
             log("* Bear blocks: Challenges your power, you must defeat the bear to proceed forward.\n");
             log("* PowerUp blocks: Increases your power.\n");
             log("* PowerDown blocks: Decreases your power.\n");
-            log("* Luck blocks: Improves your luck, hence increasing the dice size(7,8,9,10).\n");
+            log("* Luck blocks: Improves your luck, hence increasing the dice size (7,8,9,10).\n");
             log("* Special blocks: Offer unique choices, build your own fate.\n\n");
             log("Your goal is still to reach block 100.\n");
             log("Use the menu above to start a manual game or run a specific number of strategies.\n\n");
@@ -126,13 +131,42 @@ public class GameGUI {
             log("Run multiple games to see which approach leads to more wins!\n\n");
         });
 
+        // Add KeyListener to handle clearing prompt when user starts typing
+        inputField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (inputCallback != null && inputField.getText().equals(INPUT_PROMPT)) {
+                    inputField.setText("");
+                    inputField.setForeground(Color.BLACK);
+                }
+            }
+        });
+
+        // Add FocusListener to reset prompt if input field is empty when focus is lost
+        inputField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (inputCallback != null && inputField.getText().isEmpty()) {
+                    setInputPrompt();
+                }
+            }
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (inputCallback != null && inputField.getText().equals(INPUT_PROMPT)) {
+                    inputField.setText("");
+                    inputField.setForeground(Color.BLACK);
+                }
+            }
+        });
+
         inputField.addActionListener(e -> handleUserInput());
     }
 
     private void handleUserInput() {
         String userInput = inputField.getText().trim();
         if (inputCallback != null) {
-            stopHighlightingInputField();
+            clearInputPrompt();
             inputCallback.accept(userInput);
             inputField.setText("");
         } else {
@@ -207,10 +241,9 @@ public class GameGUI {
         JMenu helpMenu = new JMenu("Help");
         JMenuItem strategyInfoItem = new JMenuItem("Strategy Info");
         strategyInfoItem.addActionListener(e -> showStrategyInfoDialog());
-        helpMenu.add(strategyInfoItem);
-
         JMenuItem showStatsItem = new JMenuItem("Show Current Players/Stats");
         showStatsItem.addActionListener(e -> showCurrentStats());
+        helpMenu.add(strategyInfoItem);
         helpMenu.add(showStatsItem);
 
         menuBar.add(gameMenu);
@@ -265,6 +298,12 @@ public class GameGUI {
         JOptionPane.showMessageDialog(mainFrame, info, "Strategy Info", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Sets the callback to be invoked when user inputs data.
+     * Displays a clear prompt in the input field.
+     *
+     * @param callback the Consumer to handle user input
+     */
     public void addManualGameAction(Runnable action) {
         strategyActions.put("MANUAL_GAME", action);
     }
@@ -284,6 +323,11 @@ public class GameGUI {
         }
     }
 
+    /**
+     * Logs a message to the log area in the GUI.
+     *
+     * @param message the message to log
+     */
     public void log(String message) {
         SwingUtilities.invokeLater(() -> {
             logArea.append(message);
@@ -291,6 +335,9 @@ public class GameGUI {
         });
     }
 
+    /**
+     * Resets the game GUI to its initial state.
+     */
     public void reset() {
         SwingUtilities.invokeLater(() -> {
             logArea.setText("");
@@ -307,7 +354,7 @@ public class GameGUI {
             log("* Bear blocks: Challenges your power, you must defeat the bear to proceed forward.\n");
             log("* PowerUp blocks: Increases your power.\n");
             log("* PowerDown blocks: Decreases your power.\n");
-            log("* Luck blocks: Improves your luck, hence increasing the dice size(7,8,9,10).\n");
+            log("* Luck blocks: Improves your luck, hence increasing the dice size (7,8,9,10).\n");
             log("* Special blocks: Offer unique choices, build your own fate.\n\n");
             log("Your goal is still to reach block 100.\n");
             log("Use the menu above to start a manual game or run a specific number of strategies.\n\n");
@@ -316,41 +363,53 @@ public class GameGUI {
             log("* PUNCH_NEAREST: Always choose to punch the player nearest to the finish, whenever encountering Special blocks.\n");
             log("* BALANCED: Boost the player if distance from player in front >10, otherwise punch them.\n");
             log("Run multiple games to see which approach leads to more wins!\n\n");
+            clearInputPrompt();
             updateBoardDisplay();
         });
     }
 
+    /**
+     * Sets the callback for user input and displays the prompt.
+     *
+     * @param callback the Consumer to handle user input
+     */
     public void setInputCallback(Consumer<String> callback) {
         this.inputCallback = callback;
         if (this.inputCallback != null) {
-            startHighlightingInputField();
+            setInputPrompt();
         } else {
-            stopHighlightingInputField();
+            clearInputPrompt();
         }
     }
 
+    /**
+     * Requests focus on the input field.
+     */
     public void requestInputFocus() {
         SwingUtilities.invokeLater(() -> inputField.requestFocusInWindow());
     }
 
-    private void startHighlightingInputField() {
-        if (highlightTimer != null && highlightTimer.isRunning()) {
-            return;
-        }
-        highlightTimer = new javax.swing.Timer(500, e -> {
-            highlightState = !highlightState;
-            inputField.setBackground(highlightState ? Color.YELLOW : Color.WHITE);
-        });
-        highlightTimer.start();
+    /**
+     * Sets the prompt text in the input field.
+     */
+    private void setInputPrompt() {
+        inputField.setText(INPUT_PROMPT);
+        inputField.setForeground(Color.GRAY);
     }
 
-    private void stopHighlightingInputField() {
-        if (highlightTimer != null) {
-            highlightTimer.stop();
+    /**
+     * Clears the prompt text if present.
+     */
+    private void clearInputPrompt() {
+        if (inputField.getText().equals(INPUT_PROMPT)) {
+            inputField.setText("");
+            inputField.setForeground(Color.BLACK);
         }
-        inputField.setBackground(Color.WHITE);
     }
 
+    /**
+     * Updates the board display based on the current game state.
+     */
     public void updateBoardDisplay() {
         SwingUtilities.invokeLater(() -> {
             if (GameBoard.currentGame == null) {
@@ -375,7 +434,7 @@ public class GameGUI {
                         Color bgColor = switch (type.toLowerCase()) {
                             case "fox" -> Color.ORANGE;
                             case "crow" -> Color.LIGHT_GRAY;
-                            case "bear" -> new Color(139,69,19);
+                            case "bear" -> new Color(139, 69, 19);
                             case "powerup" -> Color.GREEN;
                             case "powerdown" -> Color.RED;
                             case "lucky place" -> Color.CYAN;
