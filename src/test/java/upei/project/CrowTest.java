@@ -12,6 +12,7 @@ public class CrowTest {
     public void testApplyEffect() {
         Crow crowBlock = new Crow(1);
         crowBlock.addPlayer(testHarshPlayer);
+        testHarshPlayer.setPosition(crowBlock);
         crowBlock.applyEffect(testHarshPlayer);
         assertEquals(10,testHarshPlayer.getCurrentPosition().getPosition());
     }
