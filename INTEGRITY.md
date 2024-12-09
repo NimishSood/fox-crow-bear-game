@@ -12,6 +12,6 @@ outlined by my instructor and consistent with the Academic Regulation 20.
 
 Signatures:
 
-Student name (Student number)
+Aditya Sagar (370353)
 
-Student name (Student number)
+Nimish Sood (Student number)
