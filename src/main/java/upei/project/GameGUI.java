@@ -129,6 +129,7 @@ public class GameGUI {
             log("* PUNCH_NEAREST: Always choose to punch the player nearest to the finish, whenever encountering Special blocks.\n");
             log("* BALANCED: Boost the player if distance from player in front >10, otherwise punch them.\n");
             log("Run multiple games to see which approach leads to more wins!\n\n");
+            log("Please refer to the game rules file in the project to get a detailed understanding of the working");
         });
 
         // Add KeyListener to handle clearing prompt when user starts typing
@@ -294,6 +295,7 @@ public class GameGUI {
             
             In manual games, at the end you see each player's final stats,
             providing insight into how choices affected the outcome.
+            Please refer to the game rules file in the project to get a detailed understanding of the working;
             """;
         JOptionPane.showMessageDialog(mainFrame, info, "Strategy Info", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -363,6 +365,7 @@ public class GameGUI {
             log("* PUNCH_NEAREST: Always choose to punch the player nearest to the finish, whenever encountering Special blocks.\n");
             log("* BALANCED: Boost the player if distance from player in front >10, otherwise punch them.\n");
             log("Run multiple games to see which approach leads to more wins!\n\n");
+            log("Please refer to the game rules file in the project to get a detailed understanding of the working");
             clearInputPrompt();
             updateBoardDisplay();
         });

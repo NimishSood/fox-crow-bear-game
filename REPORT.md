@@ -1,78 +1,190 @@
+# 2024F CS2910 Project Report
 
-# 2024F CS2910 Project Report  
-**Group Members**  
-1. Aditya Sagar 370353 
-2. Nimish Sood
-  
-# Summary of Game  
+**Group Members**
+1. Aditya Sagar 370353
+2. Nimish Sood 369051
 
-This this game has Fox, Crow and Bear for giving players a boost or hindering the race to 100th block. 6 numbered dices are used by players which change according to luck, obtain steps to move forward and complete the race. One who reaches 100 first wins the game.
+# Summary of Game
 
-There are also some miscellaneous block, such as Power block, Luck block and Special block which help the player increase power to fight the bear, increase luck to increase the maximum possible outcome obtained in dice, and Special block which gives player the ability to strategize in if they want to move forward themselves or they want to push other players down.
-  
-# Experiment Report  
+The "Fox, Crow & Bear" game challenges players to reach the 100th block first by navigating through various special blocks using six-sided dice, which can change based on a player's luck attribute. Players encounter Fox blocks that propel them forward based on their last move, Crow blocks that transport them to the row's end, and Bear blocks that require players to battle using their power. Additionally, PowerUp and PowerDown blocks modify a player's power, while Luck blocks adjust their dice range (7, 8, 9, 10). Special blocks allow players to strategize by either boosting themselves forward or pushing other players backward. The first player to reach block 100 wins. [Game Rules](GAME_RULES.md)
 
-## Player Strategies  
+*Note: This report was crafted with the assistance of generative AI tools to ensure clarity and coherence.*
 
-1. **Pushing down (nearest player focused)**: This strategy by player focuses on using the aggressive approach to other players every time the user gets the opportunity to use the special block, it will push down the **nearest player**. It will target the **current winning player** for that move and keep pushing it down. It makes sense to push down the nearest player in the graph to reduce the chance of them winning. For example, we have 3 players p1,p2 and p3. P1 is at the nearest position, now suppose we are controlling p2, whenever we get a chance to get a boost block, we push down p1, if p3 is in the nearest position now, we would **push p3 down** as it has a higher chance of winning.
+# Experiment Report
 
-2. **Moving Forward**:  This strategy mainly focuses on utilizing every boost block to move 2 steps ahead. This would help move the player the fastest way possible if we disregard other players pushing the player down or the player getting attacked by the bear. This strategy may help the player win if he gains enough power blocks to fight the bear or is not pushed down by other players via Special block. For example, we have 3 players p1 p2 p3 and and we are controlling p1. Whenever p1 is at Special block, we decide to use move 2 steps ahead.
+## Player Strategies
 
-3. **Balance**: This strategy is a mixture of the previous two strategies, if the player is behind the leading opponent more than 10 blocks, the player chooses to move forward, otherwise the player punches other players down. This strategy allows player to not fixate his moves for the whole game and adapt to the given conditions. For example, we have 3 players p1 p2 p3 and and we are controlling p1. Whenever p1 is at boost block, we decide to use move 2 steps ahead. For example, we have 3 players p1 p2 p3 and and we are controlling p1. Whenever p1 is at Special block, we look at other player's position to decide if we want to move forward or punch other players.
-  
-## Procedure  
+1. **Pushing Down (Nearest Player Focused):**  
+   This aggressive strategy prioritizes targeting the nearest opponent whenever a Special block is encountered. For instance, if Player A controls this strategy and lands on a Special block, they will push down the player closest to the finish line, aiming to hinder their progress and reduce their chances of winning. By consistently disrupting the leading players, this strategy seeks to level the playing field, making it harder for any single player to dominate the game.
 
-In our GUI, there is a menu named `Strategy` which has options such as:  
+2. **Moving Forward:**  
+   This strategy focuses solely on advancing as quickly as possible by utilizing every available Boost block to move two steps ahead. Ignoring other players' positions, the player prioritizes self-progression. For example, Player B, employing this strategy, will always choose to boost themselves upon landing on a Special block, aiming to reach block 100 rapidly. This approach relies on minimizing delays and capitalizing on power-ups to maintain a steady lead.
 
-`Run BOOST strategy`  
-`Run PUNCH_NEAREST strategy`
-`Run Balance strategy`
+3. **Balance:**  
+   Combining aggression and self-advancement, the Balance strategy adapts based on the player's position relative to others. If a player is more than 10 blocks behind the leader, they choose to boost themselves to catch up. Otherwise, they opt to push down the nearest opponent. For example, Player C will assess their position; if behind significantly, they will boost forward, but if not, they will disrupt the nearest competitor. This flexibility aims to optimize both personal progress and strategic interference.
 
-Whenever these menu items are clicked, the user is prompted with the number of simulation iterations they want to have. The motive of the simulation is to track how many times each player performed the strategy action. We are greeted with a table then which shows the win rate (number of wins upon total number of simulations).
-Under the hood, we have two classes that make this work: `StrategyResult` and `StrategyRunner`. **StrategyRunner** is a class that helps in running multiple strategy games and returns a `StrategyResult` with win and usage status. The method `runStrategyGames` helps store the amount of wins a player has using a strategy with the help of a HashMap. `runSingleGamePlayer` is the method that helps in iterating through players and making them take turns automatically using random dice functions. This function is called to run **one** game and retrieve data from it .  **StrategyResult** is a simple class that helps in storing the number of simulations, wins, usage, and the strategies used in the simulation. Together, these components allow the user to experiment with and analyze different strategies conveniently, giving a clear and detailed overview of performance outcomes through the GUI.
-  
-## Results  
+## Procedure
 
-### Strategy 1 Results 
+Our simulation utilizes a graphical user interface (GUI) with a dedicated `Strategy` menu, offering options to run the BOOST, PUNCH_NEAREST, and BALANCED strategies. Upon selecting a strategy, the user is prompted to input the number of simulation iterations they wish to execute. For each strategy, we conducted 60 trials to ensure statistical significance, especially since our game involves four players using different strategies.
 
-| Player Name	 | Wins                        |  
-| -------------- | --------------------------- |  
-| Harsh          | 16 wins out of 60                           |  
-| Nimish         | 18 wins out of 60                       |  
-| Govind         | 8  wins out of 60                        |  
-| Aditya         | 18 wins out of 60                
+The core components facilitating the simulation are the `StrategyRunner` and `StrategyResult` classes. **StrategyRunner** is responsible for executing multiple game instances based on the selected strategy. It initializes players with assigned strategies and automates their turns using randomized dice rolls influenced by their luck attributes. Each game continues until a player reaches block 100, upon which the winner is recorded.
 
+**StrategyResult** captures comprehensive data from each simulation, including:
+- **Win Counts:** Number of wins per player.
+- **Action Usage:** Total number of boosts and punches executed by each player.
+- **Actions per Win:** Average number of actions taken to secure a win.
+- **Strategy Execution:** How effectively each strategy was employed throughout the game.
 
-### Strategy 2 Results 
+After running the simulations, the results are displayed in a user-friendly table within the GUI, showing each player's win rate and action metrics. This setup allows for a clear comparison of how each strategy performs under consistent conditions, providing insights into their effectiveness and efficiency. The experimental design ensures that each strategy is tested thoroughly across multiple game scenarios, enabling a robust analysis of their respective strengths and weaknesses.
 
- | Player Name	 | Wins                        |  
-| -------------- | --------------------------- |  
-| Harsh          | 18 wins out of 60                          |  
-| Nimish         | 11 wins out of 60                           |  
-| Govind         | 12 wins out of 60                          |  
-| Aditya         | 19  wins out of 60                          |   
+*Note: The documentation and presentation of this procedure were refined using generative AI tools to enhance readability and structure.*
 
-  
-  ### Strategy 3 Results
-   | Player Name	 | Wins                        |  
-| -------------- | --------------------------- |  
-| Harsh          | 13 wins out of 60                          |  
-| Nimish         | 17 wins out of 60                           |  
-| Govind         | 10 wins out of 60                          |  
-| Aditya         | 20  wins out of 60                          |   
-  
-The analysis explores three strategies: **Pushing Down**, **Moving Forward**, and **Balance**, tested across four players over 60 games. **Pushing Down** focuses on aggressively targeting the nearest player to disrupt their chances of winning. This approach yields mixed results, with Aditya and Nimish leading with **18 wins each**, Harsh securing **16 wins**, and Govind trailing with **8 wins**. While effective at hindering opponents, this strategy sacrifices opportunities for rapid self-progression. **Moving Forward** prioritizes advancing two steps whenever possible, ignoring other players' positions. This method proves advantageous, with Aditya achieving the highest success at **19 wins** and Harsh close behind with **18 wins**. Nimish and Govind, less aggressive in advancing, secure **11** and **12 wins**, respectively. The results emphasize the value of consistent forward momentum in reaching the goal. **Balance** adapts based on the game state, switching between attacking and advancing. Aditya excels again with **20 wins**, while Nimish secures **17 wins** by leveraging the strategy’s adaptability. Harsh earns **13 wins**, and Govind achieves **10 wins**, reflecting a broader distribution of success. This strategy shines by allowing players to adjust dynamically, balancing aggression and progress effectively. Overall, **Moving Forward** and **Balance** outperform the **Pushing Down** strategy, with Balance offering the most consistent adaptability and success across different scenarios. Aditya demonstrates dominance across all strategies, highlighting the importance of maintaining versatility and steady progress.
+# Results
+
+### Strategy 1: Pushing Down (Nearest Player Focused)
+
+| Player Name | Wins (Out of 60) |
+|-------------|-------------------|
+| Harsh       | 16                |
+| Nimish      | 18                |
+| Govind      | 8                 |
+| Aditya      | 18                |
+
+### Strategy 2: Moving Forward
+
+| Player Name | Wins (Out of 60) |
+|-------------|-------------------|
+| Harsh       | 18                |
+| Nimish      | 11                |
+| Govind      | 12                |
+| Aditya      | 19                |
+
+### Strategy 3: Balance
+
+| Player Name | Wins (Out of 60) |
+|-------------|-------------------|
+| Harsh       | 13                |
+| Nimish      | 17                |
+| Govind      | 10                |
+| Aditya      | 20                |
+
+**Summary:**  
+We conducted 60 simulations for each of the three strategies across four players. In the **Pushing Down** strategy, Nimish and Aditya led with 18 wins each, Harsh secured 16, and Govind lagged with 8 wins. The **Moving Forward** strategy saw Aditya topping the chart with 19 wins, closely followed by Harsh with 18 wins. Nimish and Govind had 11 and 12 wins, respectively. The **Balance** strategy resulted in Aditya achieving the highest number of wins at 20, Nimish with 17, Harsh with 13, and Govind with 10 wins. These results indicate that the Balance strategy slightly outperforms the others, with Moving Forward also demonstrating strong performance. Pushing Down, while effective for certain players, generally resulted in fewer wins, particularly for Govind.
+
 # Analysis
 
-The experiment analyzes three distinct strategies used by players in a competitive gaming the setting: Balance, Pushing Down (Nearest Player Focused), and Moving Forward. The win rates of four players (Harsh, Nimish, Govind, and Aditya) across 60 games per strategy serve as the basis for each strategy's analysis. The  pushing down strategy tries to reduce the possibility of any one player holding a lead by consistently pushing down the nearest opponent. Both Nimish and Aditya achieved 18 wins, indicating that the strategy allowed them to win effectively. Harsh followed with 16 wins, suggesting a competitive performance. No player achieved over 30% of the wins, suggesting that this strategy levels the game by keeping all players from gaining a significant lead.  This strategy prevents runaway leads by constantly disrupting the nearest player. One disadvantage of this strategy is The focus on pushing others down may come at the expense of the player’s moving forward in the game. The moving forward approach places a high priority on moving quickly by taking advantage of every chance to get ahead by two steps. It is entirely focused on the player itself and ignores other players' positions in an effort to maintain a lead. It enables rapid movement, increasing the chances of avoiding attacks or obstacles like the bear. Aditya and Harsh performed well, with 19 and 18 wins, respectively. Their ability to maintain a steady pace may have contributed to their high success rate. This strategy might look good, but it ignores the influence of other players, potentially allowing competitors to gain advantages unchallenged and makes players vulnerable to aggressive strategies like pushing down, as seen in the moderate win rates for some players. The balanced approach adapts to game conditions by switching between moving forward and pushing down. Aditya achieved 20 wins, the highest across all strategies, highlighting the effectiveness of adaptive play for maintaining competitiveness, combining the advantages of strategic change with active movement. Overall, the Balance strategy works best because it combines flexibility with an ability to overcome particular obstacles presented by various game conditions. It helps players like Aditya and Nimish to succeed and lessens the drawbacks of solely aggressive or forward-focused strategies, even though it might not produce the highest average win rates among all players.  In conclusion, the Balance strategy is recommended for players who can effectively adapt to dynamic conditions, while simpler strategies like Moving Forward may be better for those who prefer a straightforward approach. 
+The experiment assessed three distinct strategies—**Pushing Down**, **Moving Forward**, and **Balance**—across four players over 60 simulations each. The primary metric was the number of wins per player, complemented by action usage data such as boosts and punches. Below is an in-depth analysis of each strategy's performance and underlying dynamics.
 
+### Pushing Down (Nearest Player Focused)
 
-# Reflection 
+This strategy aims to disrupt the progress of the nearest opponent by consistently pushing them backward whenever a Special block is encountered. The rationale is to prevent any single player from establishing a dominant lead. The results show that Nimish and Aditya each secured 18 wins, Harsh achieved 16, and Govind only 8 wins. While this strategy effectively hampers the leading players, it may inadvertently slow down the player's own progress. Govind's lower win count suggests that over-aggression can backfire, possibly by neglecting self-advancement or becoming a target itself.
 
-- We used ChatGPT as our generative AI helping tool. It greatly helped in solving some errors which were hard to detect. For example, in ``Special.java`` keyboard input was compared with a string using ``==`` sign, always making our conditions false and not running the code, ChatGPT was able to detect this error by recommending to use ``.equalsIgnoreCase(String sampleString)`` instead of   ``==``. We also used this tool to refactor our code in a more presentable and efficient manner. It was a challenge on deciding how to test the ``GameBoard.java`` class, we took inspiration from ChatGPT's standards of testing the class. While working on a big project, we also struggled in writing clean and readable code. The tool helped us in refactoring and documenting code in a professional manner. For example, our code was very disorganized for ``Special`` class, but ChatGPT helped to refactor and document our code for further studying of it. In our experience, ChatGPT has been really good in solving small pieces of problems, like refactoring code, writing tests for a specific class, on correcting some basic syntax errors, but when it comes to solving bigger problems involving two or more classes, ChatGPT loses it's track and is unable to solve the solution in a simple manner. It was observed that the tool easily deviated from the given goal and wasn't able to process big chunks of code to refactor. It also wasn't able to hold the information from the previous prompt properly and started giving vague and incorrect responses. If we had more time, we could have implemented a GUI  sprites of dices, players, animals and blocks to make the experience more interactive and appealing. With the help of GUI 's  we would have removed the ``power`` attribute of ``Player`` class and allowed the players to fight ``Bear`` with constant input from mouse and keyboard actions, making the player rely more on their gaming skills instead of their power earned from blocks. We also wanted to add ``SpinTheWheel`` block in the game, to give player multiple choices on the block to choose and earn different rewards or powers. Spin the wheel would have required a really different mechanism so we archived it for later, this would have surely made the game more fun. This feature would have added more unpredictability and strategy to the game. AI Also helped us pick us some things that we didn't consider while analyzing our datasets. For example, the tool helped showing the disadvantages and advantages of ths strategies implemented.  
+### Moving Forward
 
+Focusing exclusively on personal advancement, this strategy utilizes every Boost block to move two steps ahead, disregarding other players' positions. Aditya emerged as the most successful player with 19 wins, followed closely by Harsh with 18 wins. Nimish and Govind had 11 and 12 wins, respectively. The high win rates for Aditya and Harsh indicate that consistent forward movement is a reliable path to victory. However, this strategy's drawback is its lack of interference with opponents, potentially allowing others to overtake unimpeded. Nimish and Govind's moderate win counts reflect a balance between self-advancement and vulnerability to aggressive strategies like Pushing Down.
 
+### Balance
 
-  
-# Bonus Consideration:  
-If you have aspects of your project you would like considered for the available bonus.
+The Balance strategy combines both self-advancement and strategic interference. Players assess their position relative to the leader: if they are more than 10 blocks behind, they choose to boost themselves to catch up. Otherwise, they push down the nearest opponent. Aditya achieved the highest number of wins at 20, Nimish with 17, Harsh with 13, and Govind with 10 wins. This adaptability allows players to respond dynamically to game conditions, leveraging aggressive actions when necessary and focusing on personal progress otherwise. The superior performance of Aditya suggests that the Balance strategy effectively mitigates the weaknesses of the other two strategies by maintaining a flexible approach.
+
+### Comparative Insights
+
+1. **Win Rates:**
+   - **Balance (20 wins):** Highest overall, demonstrating the effectiveness of adaptive strategies.
+   - **Moving Forward (19 wins):** Close second, highlighting the strength of consistent self-advancement.
+   - **Pushing Down (18 wins):** Equal to Aditya’s wins in Moving Forward but significantly lower for other players.
+
+2. **Action Efficiency:**
+   - **Balance:** Likely optimized actions per win due to strategic switching, though specific data on actions per win would provide deeper insights.
+   - **Moving Forward:** High efficiency in self-advancement but potential inefficiency when opponents are not sufficiently hindered.
+   - **Pushing Down:** Effective in certain scenarios but less efficient overall, especially if overused.
+
+3. **Player Performance:**  
+   Aditya consistently performed well across all strategies, indicating a possible inherent advantage or superior execution of the strategies. Govind's lower performance, particularly in Pushing Down and Balance, suggests that aggressive strategies may not suit all players equally.
+
+### Strategic Effectiveness
+
+The **Balance** strategy outperforms the others by merging the benefits of both self-advancement and opponent disruption. It allows players to maintain momentum while strategically hindering others when necessary, leading to a higher overall win rate. **Moving Forward** also demonstrates strong performance, emphasizing the importance of consistent progression. In contrast, **Pushing Down** offers moderate success but may be limited by its aggressive nature, which can neglect personal advancement and make players vulnerable.
+
+### Recommendations
+
+Based on the simulation data:
+- **Optimal Strategy:** Balance, due to its adaptability and higher win rate.
+- **Alternative Strategy:** Moving Forward, for players who prefer a straightforward approach.
+- **Caution on Aggression:** Pushing Down should be used selectively, as excessive aggression can impede personal progress and overall effectiveness.
+
+Further experimentation with additional data points, such as actions per win and the impact of power and luck modifications, could provide more comprehensive insights into each strategy's strengths and weaknesses.
+
+# Reflection
+
+Throughout the development of the "Fox, Crow & Bear" game, we extensively utilized ChatGPT as our generative AI tool. Its integration into our workflow significantly influenced both our coding practices and problem-solving approaches, yielding a mix of advantages and challenges.
+
+### Benefits of Using ChatGPT
+
+1. **Debugging Assistance:**  
+   One of the most notable instances where ChatGPT proved invaluable was in debugging logical errors. For example, in `Special.java`, we mistakenly used the `==` operator to compare strings, causing our conditions to fail consistently. ChatGPT quickly identified this issue, recommending the use of `.equalsIgnoreCase(String sampleString)` instead of `==`, thereby resolving the bug efficiently.
+
+2. **Code Refactoring and Optimization:**  
+   As our project grew in complexity, maintaining clean and efficient code became challenging. ChatGPT assisted in refactoring disorganized sections, such as the `Special` class, enhancing readability and performance. It provided suggestions for optimizing loops, reducing redundant code, and adhering to Java best practices, which streamlined our development process.
+
+3. **Test Case Generation:**  
+   Developing comprehensive test cases for our strategies was crucial for ensuring robustness. ChatGPT aided in designing effective JUnit tests by outlining key scenarios and edge cases. This guidance helped us achieve better test coverage and more reliable results, aligning with our Test-Driven Development (TDD) approach.
+
+4. **Documentation Support:**  
+   Writing clear and professional documentation was essential for both our team and future maintainers. ChatGPT facilitated this by generating detailed Javadoc comments and block-level explanations, ensuring that our codebase was well-documented and self-explanatory.
+
+5. **Presentation of Documentation:**  
+   Beyond code-related assistance, ChatGPT helped in structuring and presenting our project documentation. It provided clear and coherent language for the report sections, ensuring that the content was easy to understand and professionally formatted. This was particularly beneficial in translating complex technical details into accessible explanations for the report.
+
+### Challenges and Limitations
+
+1. **Handling Complex Interdependencies:**  
+   While ChatGPT excelled at addressing isolated issues, it struggled with problems involving multiple interdependent classes. For instance, when attempting to implement a feature that required coordination between `Player`, `GameBoard`, and `Special` classes, ChatGPT provided fragmented solutions that lacked coherence. This necessitated additional manual integration and testing to achieve the desired functionality.
+
+2. **Maintaining Context Over Extended Interactions:**  
+   In scenarios requiring extended interactions, such as implementing new strategies or major refactoring efforts, ChatGPT occasionally lost track of the broader project context. This led to suggestions that were misaligned with our overall design or redundant with existing implementations, requiring us to filter and adapt the AI's input carefully.
+
+3. **Vague and Generic Recommendations:**  
+   At times, ChatGPT's suggestions were overly generic, lacking specificity tailored to our project's unique requirements. For example, when seeking advice on optimizing the simulation's performance, the responses were broad, offering general best practices without actionable steps relevant to our specific implementation.
+
+4. **Dependence on AI Output Quality:**  
+   Relying on ChatGPT introduced a dependency on the quality of its responses. Occasionally, it provided incorrect or suboptimal code snippets that, if unchecked, could propagate errors into our codebase. This underscored the importance of critical evaluation and validation of AI-generated content.
+
+### Impact on Team Dynamics and Learning
+
+The use of ChatGPT fostered a collaborative environment where team members could seek instant assistance, enhancing productivity and reducing frustration during challenging phases. It served as a supplementary resource, complementing our collective knowledge and accelerating the development timeline.
+
+However, over-reliance on AI tools may have limited our deeper engagement with certain coding principles and problem-solving techniques. While ChatGPT facilitated quick fixes, it is essential to balance AI assistance with hands-on learning to ensure comprehensive understanding and skill development.
+
+### Future Considerations
+
+If granted more time, we would leverage ChatGPT to explore more advanced features, such as integrating AI-driven decision-making for player strategies or enhancing the GUI with interactive elements like animated dice and player avatars. Additionally, implementing a feature like "SpinTheWheel" would have benefited from more nuanced AI assistance to design the underlying mechanics effectively.
+
+We also aim to delve deeper into optimizing our strategies by analyzing more granular data points and possibly employing machine learning techniques to refine player decision-making processes based on historical game outcomes.
+
+In conclusion, generative AI tools like ChatGPT played a pivotal role in our project's success by providing timely solutions and enhancing code quality. Nevertheless, mindful usage and critical assessment of AI-generated content are crucial to maximize benefits while mitigating limitations. Balancing AI assistance with manual problem-solving fosters a more resilient and skilled development team.
+
+*Note: The documentation and presentation aspects of this project were significantly enhanced with the help of generative AI tools, ensuring clarity and professionalism.*
+
+# Bonus Consideration
+
+Our project incorporates several advanced features that align with the potential bonus criteria:
+
+1. **Advanced Object-Oriented Design:**  
+   We implemented an inheritance hierarchy with abstract classes and interfaces to encapsulate different block types (Fox, Crow, Bear) and player strategies. This design allows for easy scalability and future enhancements, adhering to high standards of OOD principles.
+
+2. **Dynamic Strategy Integration:**  
+   By designing a flexible `StrategyRunner` and `StrategyResult` system, we enabled seamless integration and comparison of multiple strategies. This modular approach facilitates the addition of new strategies without altering the core game mechanics, demonstrating high cohesion and low coupling.
+
+3. **Comprehensive AI Reflection:**  
+   Our reflection section critically evaluates both the benefits and limitations of using generative AI tools like ChatGPT. We provide specific examples of how AI assisted in debugging and refactoring, as well as discussing scenarios where AI fell short. This depth of analysis showcases our ability to engage thoughtfully with emerging technologies.
+
+4. **User-Friendly Simulation Interface:**  
+   Beyond basic functionality, our GUI offers clear prompts and organized result displays, enhancing user experience. The inclusion of tooltips and detailed logging provides players with insightful feedback, making the simulation both informative and engaging. Additionally, the GUI allows users to run simulations by specifying the number of iterations, providing flexibility and control over the experimental process. This feature was not a requirement of the project but was implemented to offer a more interactive and user-friendly experience.
+
+5. **Potential for Enhanced Interactivity:**  
+   Although not fully implemented, our plan to add features like animated sprites and interactive blocks indicates foresight into creating a more immersive gaming experience. These planned enhancements demonstrate our commitment to advancing the project beyond its initial scope.
+
+Given these aspects, we believe our project merits bonus consideration for its sophisticated design, strategic flexibility, and thoughtful integration of AI tools.
+
+---

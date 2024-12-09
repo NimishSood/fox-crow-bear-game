@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="upei.project.SpecialTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-12-09T03:05:00" hostname="DESKTOP-EFFFI9M" time="0.273">
+  <properties/>
+  <testcase name="testApplyEffect_WithBoostStrategy()" classname="upei.project.SpecialTest" time="0.273"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
