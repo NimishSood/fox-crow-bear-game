@@ -10,6 +10,7 @@ public class PlayerTest {
     GameBoard gb = new GameBoard();
     Player harshTestPlayer = new Player("Harsh");
 
+
     @Test
     public void testGetName() {
         assertEquals(name, harshTestPlayer.getName());
@@ -18,6 +19,8 @@ public class PlayerTest {
     @Test
     public void testGetCurrentPosition() {
         // current position index should be 1
+        Block newBlock = new Block(1,"Regular");
+        harshTestPlayer.setPosition(newBlock);
         assertEquals(1,harshTestPlayer.getCurrentPosition().getPosition());
     }
 
@@ -30,6 +33,8 @@ public class PlayerTest {
     public void testTakeTurn() {
         int testDiceRoll = 6;
         int testNewPositionIndex = 7;
+        Block newBlock = new Block(1,"Regular");
+        harshTestPlayer.setPosition(newBlock);
         harshTestPlayer.takeTurn(testDiceRoll,gb);
         assertEquals(7,harshTestPlayer.getCurrentPosition().getPosition());
         assertEquals(6,harshTestPlayer.getLastMove());
