@@ -1,13 +1,9 @@
 package upei.project;
 
 import javax.swing.*;
-import java.util.concurrent.CountDownLatch;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
-/**
- * Main class runs manual games, prompts user, runs strategy experiments,
- * displays final stats and results.
- */
 public class Main {
 
     public static void main(String[] args) {
@@ -31,33 +27,30 @@ public class Main {
                 new Thread(() -> runManualGame(gameGUI, playerNames)).start();
             });
 
-            gameGUI.addStrategyAction("BOOST", () -> {
-                int runs = promptForStrategyRuns(gameGUI, "BOOST");
-                if (runs == 0) {
-                    logToAll(gameGUI, "Strategy run canceled.\n");
-                    return;
-                }
-                logToAll(gameGUI, "Running BOOST strategy for " + runs + " games...\n");
-                StrategyResult result = StrategyRunner.runStrategyGames("BOOST", runs);
-                displayExtendedResultsInGUI(gameGUI, result);
-            });
-
-            gameGUI.addStrategyAction("PUNCH_NEAREST", () -> {
-                int runs = promptForStrategyRuns(gameGUI, "PUNCH_NEAREST");
-                if (runs == 0) {
-                    logToAll(gameGUI, "Strategy run canceled.\n");
-                    return;
-                }
-                logToAll(gameGUI, "Running PUNCH_NEAREST strategy for " + runs + " games...\n");
-                StrategyResult result = StrategyRunner.runStrategyGames("PUNCH_NEAREST", runs);
-                displayExtendedResultsInGUI(gameGUI, result);
-            });
-
             gameGUI.addResetAction(() -> {
                 gameGUI.reset();
                 gameGUI.updateBoardDisplay();
             });
         });
+    }
+
+    public static int promptForStrategyRuns(GameGUI gameGUI, String strategyName) {
+        while (true) {
+            String input = JOptionPane.showInputDialog(null, "How many times do you want to run the " + strategyName + " strategy?", "Strategy Runs", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) {
+                return 0;
+            }
+            try {
+                int runs = Integer.parseInt(input.trim());
+                if (runs > 0) {
+                    return runs;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Enter a positive number of runs.");
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Invalid input. Please enter a positive integer.");
+            }
+        }
     }
 
     private static int promptForPlayerCount(GameGUI gameGUI) {
@@ -90,25 +83,6 @@ public class Main {
             names[i] = name.trim();
         }
         return names;
-    }
-
-    static int promptForStrategyRuns(GameGUI gameGUI, String strategyName) {
-        while (true) {
-            String input = JOptionPane.showInputDialog(null, "How many times do you want to run the " + strategyName + " strategy?", "Strategy Runs", JOptionPane.QUESTION_MESSAGE);
-            if (input == null) {
-                return 0;
-            }
-            try {
-                int runs = Integer.parseInt(input.trim());
-                if (runs > 0) {
-                    return runs;
-                } else {
-                    JOptionPane.showMessageDialog(null, "Enter a positive number of runs.");
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Invalid input. Please enter a positive integer.");
-            }
-        }
     }
 
     private static void runManualGame(GameGUI gameGUI, String[] playerNames) {
@@ -279,9 +253,11 @@ public class Main {
         };
     }
 
-    static void displayExtendedResultsInGUI(GameGUI gameGUI, StrategyResult result) {
+    public static void displayExtendedResultsInGUI(GameGUI gameGUI, StrategyResult result) {
         Map<String,Integer> wins = result.getWins();
         Map<String,Integer> usage = result.getUsage();
+        Map<String,Integer> usageBoost = result.getUsageBoost();
+        Map<String,Integer> usagePunch = result.getUsagePunch();
         int runs = result.getRuns();
         String strategy = result.getStrategy();
 
@@ -292,19 +268,43 @@ public class Main {
         logToAll(gameGUI, "\n--- Strategy Usage Analysis ---\n");
         logToAll(gameGUI, "Strategy: " + strategy + "\n");
 
-        String actionName = "BOOST".equalsIgnoreCase(strategy) ? "Boosts" : "Punches";
-        logToAll(gameGUI, "We tracked how many times each player performed the strategy action (" + actionName + "):\n\n");
-
-        for (String player : wins.keySet()) {
-            int w = wins.get(player);
-            int u = usage.get(player);
-            double winRate = (double) w / runs * 100.0;
-            String usagePerWin = (w > 0) ? String.format("%.2f", (double)u / w) : "N/A";
-
-            logToAll(gameGUI, player + ": " + w + " wins out of " + runs + " (Win Rate: " + String.format("%.2f", winRate) + "%)\n");
-            logToAll(gameGUI, "Total " + actionName + ": " + u + "\n");
-            logToAll(gameGUI, "Actions per Win: " + usagePerWin + "\n\n");
+        if ("BOOST".equalsIgnoreCase(strategy)) {
+            logToAll(gameGUI, "All actions were boosts.\n");
+            for (String player : wins.keySet()) {
+                int w = wins.get(player);
+                int u = usageBoost.get(player);
+                double winRate = (double) w / runs * 100.0;
+                String usagePerWin = (w > 0) ? String.format("%.2f", (double)u / w) : "N/A";
+                logToAll(gameGUI, player + ": " + w + " wins (" + String.format("%.2f", winRate) + "%), " +
+                        "Boosts=" + u + ", Actions per Win=" + usagePerWin + "\n");
+            }
+        } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
+            logToAll(gameGUI, "All actions were punches.\n");
+            for (String player : wins.keySet()) {
+                int w = wins.get(player);
+                int u = usagePunch.get(player);
+                double winRate = (double) w / runs * 100.0;
+                String usagePerWin = (w > 0) ? String.format("%.2f", (double)u / w) : "N/A";
+                logToAll(gameGUI, player + ": " + w + " wins (" + String.format("%.2f", winRate) + "%), " +
+                        "Punches=" + u + ", Actions per Win=" + usagePerWin + "\n");
+            }
+        } else if ("BALANCED".equalsIgnoreCase(strategy)) {
+            logToAll(gameGUI, "Balanced actions include both Boosts and Punches.\n");
+            for (String player : wins.keySet()) {
+                int w = wins.get(player);
+                int b = usageBoost.get(player);
+                int p = usagePunch.get(player);
+                double winRate = (double) w / runs * 100.0;
+                // Actions per win can consider total actions (b+p)
+                int totalActions = b + p;
+                String usagePerWin = (w > 0) ? String.format("%.2f", (double)totalActions / w) : "N/A";
+                logToAll(gameGUI, player + ": " + w + " wins (" + String.format("%.2f", winRate) + "%)\n" +
+                        "Boosts=" + b + ", Punches=" + p + "\n" +
+                        "Total Actions=" + totalActions + ", Actions per Win=" + usagePerWin + "\n\n");
+            }
         }
+
+        logToAll(gameGUI, "\nUse this detailed breakdown to understand how often each player performed each action and how it correlated with their success.\n");
     }
 
     private static void logToGUI(GameGUI gameGUI, String message) {

@@ -5,9 +5,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-/**
- * The GUI for the game. Displays board, log messages, menus, and handles input.
- */
 public class GameGUI {
     private static GameGUI instance;
 
@@ -109,26 +106,24 @@ public class GameGUI {
         mainFrame.setVisible(true);
 
         SwingUtilities.invokeLater(() -> {
-            log("----------------------------------------\n");
             log("Welcome to the Fox, Crow & Bear Game!\n");
             log("----------------------------------------\n\n");
             log("This game is inspired by Snakes and Ladders, but with a twist:\n");
             log("Instead of snakes and ladders, you'll encounter special blocks:\n");
-            log("* Fox blocks: propel you forward based on your last dice roll.\n");
+            log("* Fox blocks: Propels you forward, depending upon your previous move.\n");
             log("* Crow blocks: carry you forward to the end of the current row.\n");
-            log("* Bear blocks: challenge your power; win and move ahead, lose and retreat!\n");
-            log("* PowerUp blocks: increase your power, making duels easier.\n");
-            log("* PowerDown blocks: decrease your power, watch out!\n");
-            log("* Luck blocks: improve your luck, increasing your dice range.\n");
-            log("* Special blocks: offer choices like boosting forward or punching other players back.\n\n");
-            log("Just like in Snakes and Ladders, your goal is to reach block 100.\n");
-            log("Use the menu above to start a manual game, or run a strategy.\n");
-            log("Have fun exploring these unique twists!\n\n");
-
+            log("* Bear blocks: Challenges your power, you must defeat the bear to proceed forward.\n");
+            log("* PowerUp blocks: Increases your power.\n");
+            log("* PowerDown blocks: Decreases your power.\n");
+            log("* Luck blocks: Improves your luck, hence increasing the dice size(7,8,9,10).\n");
+            log("* Special blocks: Offer unique choices, build your own fate.\n\n");
+            log("Your goal is still to reach block 100.\n");
+            log("Use the menu above to start a manual game or run a specific number of strategies.\n\n");
             log("About Strategies:\n");
-            log("* BOOST: When hitting a special block, the player will always choose to boost forward.\n");
-            log("* PUNCH_NEAREST: When hitting a special block, the player will always punch the nearest player.\n");
-            log("Running strategies simulates multiple automated games to see who wins most often.\n\n");
+            log("* BOOST: Always choose to boost themselves according to the power levels, whenever encountering Special blocks.\n");
+            log("* PUNCH_NEAREST: Always choose to punch the player nearest to the finish, whenever encountering Special blocks.\n");
+            log("* BALANCED: Boost the player if distance from player in front >10, otherwise punch them.\n");
+            log("Run multiple games to see which approach leads to more wins!\n\n");
         });
 
         inputField.addActionListener(e -> handleUserInput());
@@ -164,8 +159,8 @@ public class GameGUI {
         JMenu strategyMenu = new JMenu("Strategy");
         JMenuItem boostStrategyItem = new JMenuItem("Run BOOST Strategy");
         JMenuItem punchStrategyItem = new JMenuItem("Run PUNCH_NEAREST Strategy");
+        JMenuItem balancedStrategyItem = new JMenuItem("Run BALANCED Strategy");
 
-        // Instead of running strategy on EDT, run in background thread
         boostStrategyItem.addActionListener(e -> {
             int runs = Main.promptForStrategyRuns(GameGUI.getInstance(), "BOOST");
             if (runs == 0) {
@@ -173,7 +168,6 @@ public class GameGUI {
                 return;
             }
             log(">> Running BOOST strategy for " + runs + " games...\n");
-
             new Thread(() -> {
                 StrategyResult result = StrategyRunner.runStrategyGames("BOOST", runs);
                 SwingUtilities.invokeLater(() -> Main.displayExtendedResultsInGUI(GameGUI.getInstance(), result));
@@ -187,15 +181,28 @@ public class GameGUI {
                 return;
             }
             log(">> Running PUNCH_NEAREST strategy for " + runs + " games...\n");
-
             new Thread(() -> {
                 StrategyResult result = StrategyRunner.runStrategyGames("PUNCH_NEAREST", runs);
                 SwingUtilities.invokeLater(() -> Main.displayExtendedResultsInGUI(GameGUI.getInstance(), result));
             }).start();
         });
 
+        balancedStrategyItem.addActionListener(e -> {
+            int runs = Main.promptForStrategyRuns(GameGUI.getInstance(), "BALANCED");
+            if (runs == 0) {
+                log(">> Strategy run canceled.\n");
+                return;
+            }
+            log(">> Running BALANCED strategy for " + runs + " games...\n");
+            new Thread(() -> {
+                StrategyResult result = StrategyRunner.runStrategyGames("BALANCED", runs);
+                SwingUtilities.invokeLater(() -> Main.displayExtendedResultsInGUI(GameGUI.getInstance(), result));
+            }).start();
+        });
+
         strategyMenu.add(boostStrategyItem);
         strategyMenu.add(punchStrategyItem);
+        strategyMenu.add(balancedStrategyItem);
 
         JMenu helpMenu = new JMenu("Help");
         JMenuItem strategyInfoItem = new JMenuItem("Strategy Info");
@@ -237,8 +244,9 @@ public class GameGUI {
             Strategy and Stats Info:
             
             In this game, you can run multiple automated games using a chosen strategy:
-            - BOOST Strategy: Players always boost at special blocks.
-            - PUNCH_NEAREST Strategy: Players always punch at special blocks.
+            - BOOST: Always boost at special blocks.
+            - PUNCH_NEAREST: Always punch at special blocks.
+            - BALANCED: If behind the leading player by more than 10 blocks, boost; otherwise, punch.
             
             After running these strategy simulations multiple times, we track:
             - How many times each player won.
@@ -247,12 +255,12 @@ public class GameGUI {
             - Actions per win (how many times they had to boost/punch on average for each win).
             
             Interpreting the Results:
-            - A higher win count and high win rate suggests a strategy works well.
-            - A high number of actions might indicate reliance on the strategy.
-            - Actions per win shows efficiency: fewer actions per win might mean more effective strategy.
+            - BOOST aims for fast forward progress.
+            - PUNCH_NEAREST slows others down but may not advance you enough.
+            - BALANCED adapts, boosting when behind and punching when not.
             
-            In manual games, at the end you see each player's final stats, including boosts/punches used,
-            power, and luck. This gives insight into how their choices affected the outcome.
+            In manual games, at the end you see each player's final stats,
+            providing insight into how choices affected the outcome.
             """;
         JOptionPane.showMessageDialog(mainFrame, info, "Strategy Info", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -294,18 +302,19 @@ public class GameGUI {
             log("----------------------------------------\n\n");
             log("This game is inspired by Snakes and Ladders, but with a twist:\n");
             log("Instead of snakes and ladders, you'll encounter special blocks:\n");
-            log("* Fox blocks: propel you forward.\n");
+            log("* Fox blocks: Propels you forward, depending upon your previous move.\n");
             log("* Crow blocks: carry you forward to the end of the current row.\n");
-            log("* Bear blocks: challenge your power.\n");
-            log("* PowerUp blocks: increase your power.\n");
-            log("* PowerDown blocks: decrease your power.\n");
-            log("* Luck blocks: improve your luck.\n");
-            log("* Special blocks: offer unique choices.\n\n");
+            log("* Bear blocks: Challenges your power, you must defeat the bear to proceed forward.\n");
+            log("* PowerUp blocks: Increases your power.\n");
+            log("* PowerDown blocks: Decreases your power.\n");
+            log("* Luck blocks: Improves your luck, hence increasing the dice size(7,8,9,10).\n");
+            log("* Special blocks: Offer unique choices, build your own fate.\n\n");
             log("Your goal is still to reach block 100.\n");
-            log("Use the menu above to start a manual game or run a strategy.\n\n");
+            log("Use the menu above to start a manual game or run a specific number of strategies.\n\n");
             log("About Strategies:\n");
-            log("* BOOST: Always choose to boost.\n");
-            log("* PUNCH_NEAREST: Always choose to punch.\n");
+            log("* BOOST: Always choose to boost themselves according to the power levels, whenever encountering Special blocks.\n");
+            log("* PUNCH_NEAREST: Always choose to punch the player nearest to the finish, whenever encountering Special blocks.\n");
+            log("* BALANCED: Boost the player if distance from player in front >10, otherwise punch them.\n");
             log("Run multiple games to see which approach leads to more wins!\n\n");
             updateBoardDisplay();
         });

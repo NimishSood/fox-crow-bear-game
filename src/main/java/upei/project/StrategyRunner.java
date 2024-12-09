@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * Runs multiple strategy games and returns a StrategyResult with wins and usage stats.
+ * Now tracks boost and punch usage separately.
  */
 public class StrategyRunner {
     private static String globalStrategy = null;
@@ -25,33 +26,63 @@ public class StrategyRunner {
         results.put("Harsh",0);
         results.put("Govind",0);
 
+        // usage: total actions used by that strategy (if single action)
         Map<String,Integer> usage = new HashMap<>();
-        usage.put("Aditya",0);
-        usage.put("Nimish",0);
-        usage.put("Harsh",0);
-        usage.put("Govind",0);
+        Map<String,Integer> usageBoost = new HashMap<>();
+        Map<String,Integer> usagePunch = new HashMap<>();
+        for (String p : results.keySet()) {
+            usage.put(p,0);
+            usageBoost.put(p,0);
+            usagePunch.put(p,0);
+        }
 
         setGlobalStrategy(strategy);
 
         for (int i = 1; i <= runs; i++) {
             Player[] players = runSingleGamePlayers();
             String winner = determineWinner(players);
-            results.put(winner, results.get(winner) + 1);
+            results.put(winner, results.getOrDefault(winner, 0) + 1);
 
-            // Accumulate usage based on chosen strategy
+            // Record usage based on strategy:
             for (Player p : players) {
-                int count = 0;
+                int boostCount = p.getBoostCount();
+                int punchCount = p.getPunchCount();
+
                 if ("BOOST".equalsIgnoreCase(strategy)) {
-                    count = p.getBoostCount();
+                    // Only boosts matter
+                    usageBoost.put(p.getName(), usageBoost.get(p.getName()) + boostCount);
                 } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
-                    count = p.getPunchCount();
+                    // Only punches matter
+                    usagePunch.put(p.getName(), usagePunch.get(p.getName()) + punchCount);
+                } else if ("BALANCED".equalsIgnoreCase(strategy)) {
+                    // BALANCED does both
+                    usageBoost.put(p.getName(), usageBoost.get(p.getName()) + boostCount);
+                    usagePunch.put(p.getName(), usagePunch.get(p.getName()) + punchCount);
                 }
-                usage.put(p.getName(), usage.get(p.getName()) + count);
             }
         }
 
         setGlobalStrategy(null);
-        return new StrategyResult(strategy, runs, results, usage);
+
+        // For single-action strategies, usage = usageBoost or usagePunch as appropriate
+        // For BALANCED, usage can remain as zero or sum of both, but we have separate maps anyway.
+        if ("BOOST".equalsIgnoreCase(strategy)) {
+            // usage map is basically usageBoost
+            for (String pl : results.keySet()) {
+                usage.put(pl, usageBoost.get(pl));
+            }
+        } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
+            for (String pl : results.keySet()) {
+                usage.put(pl, usagePunch.get(pl));
+            }
+        } else if ("BALANCED".equalsIgnoreCase(strategy)) {
+
+            for (String pl : results.keySet()) {
+                usage.put(pl, usageBoost.get(pl) + usagePunch.get(pl));
+            }
+        }
+
+        return new StrategyResult(strategy, runs, results, usage, usageBoost, usagePunch);
     }
 
     @Deprecated
@@ -67,20 +98,18 @@ public class StrategyRunner {
         Player player3 = new Player("Harsh");
         Player player4 = new Player("Govind");
 
-        Player[] players = {player1, player2, player3, player4};
-        for (Player p : players) {
+        for (Player p : new Player[]{player1, player2, player3, player4}) {
             p.setPosition(GameBoard.getBlock(1));
         }
 
-        gameBoard.players = players;
+        gameBoard.players = new Player[]{player1, player2, player3, player4};
 
         while (true) {
-            for (Player player : players) {
+            for (Player player : gameBoard.players) {
                 int diceOutcome = diceCalculator(player);
                 player.takeTurn(diceOutcome, gameBoard);
-
                 if (player.getCurrentPosition().getPosition() == 100) {
-                    return players;
+                    return gameBoard.players;
                 }
             }
         }

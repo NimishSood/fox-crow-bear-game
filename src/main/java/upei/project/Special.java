@@ -1,8 +1,5 @@
 package upei.project;
 
-/**
- * Special block that, under a global strategy, applies either BOOST or PUNCH_NEAREST.
- */
 public class Special extends Block {
     private final GameBoard currentBoard;
     private static String globalStrategy = null;
@@ -16,7 +13,7 @@ public class Special extends Block {
         if (globalStrategy != null) {
             applyEffect(player, globalStrategy);
         } else {
-            // If no global strategy, no forced action here. Manual game actions handled elsewhere.
+            // If no global strategy, do nothing special here.
         }
     }
 
@@ -29,9 +26,33 @@ public class Special extends Block {
         } else if ("PUNCH_NEAREST".equalsIgnoreCase(strategy)) {
             player.incrementPunchCount();
             punchNearestPlayer(player);
+        } else if ("BALANCED".equalsIgnoreCase(strategy)) {
+            // Determine if player is behind leader by >10
+            // If yes, BOOST, else PUNCH
+            Player leader = findLeader(currentBoard.players);
+            int leaderPos = leader.getCurrentPosition().getPosition();
+            int playerPos = player.getCurrentPosition().getPosition();
+
+            if (leaderPos - playerPos > 10) {
+                player.incrementBoostCount();
+                boostPlayer(player);
+            } else {
+                player.incrementPunchCount();
+                punchNearestPlayer(player);
+            }
         } else {
             GameGUI.getInstance().log(">> Unknown strategy: " + strategy + "\n");
         }
+    }
+
+    private Player findLeader(Player[] players) {
+        Player leader = players[0];
+        for (Player p : players) {
+            if (p.getCurrentPosition().getPosition() > leader.getCurrentPosition().getPosition()) {
+                leader = p;
+            }
+        }
+        return leader;
     }
 
     public boolean punchPlayerByName(Player currentPlayer, String targetName) {
